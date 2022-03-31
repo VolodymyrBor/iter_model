@@ -58,19 +58,3 @@ class SyncIter(Generic[T]):
 
     def take_while(self, func: ConditionFunc) -> 'SyncIter[T]':
         return SyncIter(itertools.takewhile(func, self))
-
-
-@sync_iter
-def gen(n: int = 5) -> SyncIter[int]:
-    for i in range(1, n + 1):
-        yield i
-
-
-def main():
-    items = gen(10)
-    # new = items.enumerate().take(3).map(lambda t: f'{t[0]}@{t[1]}').to_list()
-    new = items.where(lambda x: x % 2 == 0).map(str).enumerate().to_list()
-    print(new)
-
-
-main()
