@@ -5,6 +5,8 @@ description = "Provides models for convenient and efficient iteration"
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/VolodymyrBor/iter_model"
+repository = "https://github.com/VolodymyrBor/iter_model"
 
 [tool.poetry.dependencies]
 python = "^3.10"
