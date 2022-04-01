@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iter_model"
-version = "0.1.1"
+version = "0.1.2"
 description = "Provides models for convenient and efficient iteration"
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 license = "MIT"
@@ -12,6 +12,10 @@ repository = "https://github.com/VolodymyrBor/iter_model"
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
+pytest = "^7.1.1"
+pytest-asyncio = "^0.18.3"
+pytest-cov = "^3.0.0"
+pytest-flake8 = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
