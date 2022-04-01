@@ -3,3 +3,6 @@
 
 # ENV
 venv
+
+# Package
+dist
