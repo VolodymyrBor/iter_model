@@ -6,3 +6,7 @@ venv
 
 # Package
 dist
+
+# Tests
+.coverage
+.pytest_cache
