@@ -25,6 +25,10 @@ class TestSyncIter:
         r = range(10)
         assert SyncIter(r).take(count).to_list() == list(itertools.islice(r, count))
 
+    def test_map(self):
+        r = range(10)
+        assert SyncIter(r).map(lambda x: x ** 2).to_list() == [x ** 2 for x in range(10)]
+
     @pytest.mark.parametrize('count', (0, 5, 100))
     def test_skip(self, count: int):
         r = range(10)
@@ -32,7 +36,7 @@ class TestSyncIter:
 
     @pytest.mark.parametrize('count', (0, 1, 100))
     def test_count(self, count: int):
-        r = range(10)
+        r = range(count)
         assert SyncIter(r).count() == len(r)
 
     @pytest.mark.parametrize(
@@ -76,10 +80,6 @@ class TestSyncIter:
     )
     def test_take_while(self, items: list[int], condition: Callable, result: list[int]):
         assert SyncIter(items).take_while(condition).to_list() == result
-
-    def test_map(self):
-        r = range(10)
-        assert SyncIter(r).map(lambda x: x ** 2).to_list() == [x ** 2 for x in range(10)]
 
 
 def test_sync_iter():
