@@ -65,7 +65,7 @@ class AsyncIter(Generic[T]):
             result = func(item)
             if iscoroutine(result):
                 result = await result
-            if result:
+            if result:  # pragma: no cover
                 return item
         raise ValueError('Item not found')
 
