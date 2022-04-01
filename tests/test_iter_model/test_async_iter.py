@@ -57,6 +57,7 @@ class TestAsyncIter:
         (
             ([], lambda x: True),
             (['to_long', 'to_long_long'], lambda x: len(x) == 2),
+            (['to_long', 'to_long_long'], to_async(lambda x: len(x) == 2)),
         ),
     )
     async def test_first_where_with_exception(self, items: list[str], condition: Callable):
@@ -77,9 +78,10 @@ class TestAsyncIter:
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
         (
-                (list(range(10)), lambda x: x < 5, [x for x in range(10) if x < 5]),
-                (list(range(10)), to_async(lambda x: x < 5), [x for x in range(10) if x < 5]),
-                (list(range(10)), lambda x: x > 5, []),
+            (list(range(10)), lambda x: x < 5, [x for x in range(10) if x < 5]),
+            (list(range(10)), lambda x: x <= 10, [x for x in range(10) if x <= 10]),
+            (list(range(10)), to_async(lambda x: x < 5), [x for x in range(10) if x < 5]),
+            (list(range(10)), lambda x: x > 5, []),
         ),
     )
     async def test_take_while(self, items: list[int], condition: Callable, result: list[int]):
