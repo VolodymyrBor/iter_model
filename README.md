@@ -92,7 +92,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### SynkIter/AsyncIter provide the following methods
+### SyncIter/AsyncIter provide the following methods
 
 - ```to_list()```
 - ```enumerate()```
