@@ -91,3 +91,16 @@ async def main():
 
 asyncio.run(main())
 ```
+
+### SynkIter/AsyncIter provide the following methods
+
+- ```to_list()```
+- ```enumerate()```
+- ```take()```
+- ```map()```
+- ```map()```
+- ```skip()```
+- ```count()```
+- ```first_where()```
+- ```where()```
+- ```take_while()```
