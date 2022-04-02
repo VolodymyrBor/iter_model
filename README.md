@@ -98,7 +98,6 @@ asyncio.run(main())
 - ```enumerate()```
 - ```take()```
 - ```map()```
-- ```map()```
 - ```skip()```
 - ```count()```
 - ```first_where()```
