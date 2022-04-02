@@ -1,7 +1,93 @@
 # Iter Model
 
 [![Supported Versions](https://img.shields.io/badge/python-3.10%2B-blue)](https://shields.io/)
+[![Supported Versions](https://img.shields.io/badge/tests-passed-green)](https://shields.io/)
+[![Supported Versions](https://img.shields.io/badge/coverage-100%25-green)](https://shields.io/)
+[![Supported Versions](https://img.shields.io/badge/pypi%20package-0.1.1-green)](https://shields.io/)
+[![Supported Versions](https://img.shields.io/badge/poetry-1.1-purple)](https://shields.io/)
+[![Supported Versions](https://img.shields.io/badge/async-✅-grey)](https://shields.io/)
 
 ## Description
 
-TODO: add description
+**Iter Model** uses a method approach instead of individual functions to work with iterable objects.
+
+### Native approach
+
+```python
+result = list(map(
+    lambda x: x ** 2,
+    filter(lambda x: x % 2 == 0, range(10)),
+))
+```
+
+### Iter Model approach
+
+```python
+from iter_model import SyncIter
+
+result = (
+    SyncIter(range(10))
+        .where(lambda x: x % 2 == 0)
+        .map(lambda x: x ** 2)
+        .to_list()
+)
+
+```
+
+### Generators
+
+You can decorate your generator function and get SyncIter as a result
+
+```python
+from iter_model import sync_iter
+
+
+@sync_iter
+def some_generator():
+    for item in range(10):
+        yield item
+
+
+result = some_generator().take_while(lambda x: x < 5).to_list()
+```
+
+### Async support
+
+Iter Model also support async iterable and async function as condition.
+
+
+```python
+import asyncio
+
+from iter_model import async_iter
+
+
+@async_iter
+async def some_generator():
+    for item in range(10):
+        yield item
+
+        
+async def condition_a(x):
+    """Some async condition"""
+    return x % 2 == 0 
+
+
+def condition_b(x):
+    """Some sync condition"""
+    return x > 5 
+
+
+async def main():
+    result = await (
+        some_generator()
+            .where(condition_a)
+            .take_while(condition_b)
+            .to_list()
+    )
+    print(result)
+    
+
+
+asyncio.run(main())
+```
