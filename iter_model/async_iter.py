@@ -1,6 +1,16 @@
 from functools import wraps
 from asyncio import iscoroutine
-from typing import AsyncIterable, TypeVar, Callable, Generic, ParamSpec, Awaitable, TypeAlias
+from typing import (
+    TypeVar,
+    Generic,
+    Callable,
+    Iterable,
+    ParamSpec,
+    Awaitable,
+    TypeAlias,
+    AsyncIterable,
+    AsyncIterator,
+)
 
 T = TypeVar('T')
 R = TypeVar('R')
@@ -25,15 +35,33 @@ class AsyncIter(Generic[T]):
     def __init__(self, it: AsyncIterable[T]):
         self._it = aiter(it)
 
-    def __aiter__(self) -> AsyncIterable[T]:
+    def __aiter__(self) -> AsyncIterator[T]:
         return self._it
 
+    def __anext__(self) -> Awaitable[T]:
+        return anext(self._it)
+
+    @classmethod
+    @async_iter
+    async def from_sync(cls, it: Iterable[T]) -> 'AsyncIter[T]':  # type: ignore
+        """Create from sync iterable"""
+        for item in it:
+            yield item
+
     async def to_list(self) -> list[T]:
-        """Convert self to list"""
+        """Convert to list"""
         return [item async for item in self]
 
+    async def to_tuple(self) -> tuple[T, ...]:
+        """Convert to tuple"""
+        return tuple([item async for item in self])
+
+    async def to_set(self) -> set[T]:
+        """Convert to set"""
+        return set([item async for item in self])
+
     @async_iter
-    async def enumerate(self, start: int = 0) -> 'AsyncIter[tuple[int, T]]':
+    async def enumerate(self, start: int = 0) -> 'AsyncIter[tuple[int, T]]':  # type: ignore
         """Returns a tuple containing a count (from start which defaults to 0)
         and the values obtained from iterating over self.
 
@@ -46,7 +74,7 @@ class AsyncIter(Generic[T]):
             index += 1
 
     @async_iter
-    async def take(self, limit: int) -> 'AsyncIter[T]':
+    async def take(self, limit: int) -> 'AsyncIter[T]':  # type: ignore
         """Take 'count' items from iterator"""
         async for index, item in self.enumerate():
             if index >= limit:
@@ -54,7 +82,7 @@ class AsyncIter(Generic[T]):
             yield item
 
     @async_iter
-    async def map(self, func: Callable[[T], R | Awaitable[R]]) -> 'AsyncIter[R]':
+    async def map(self, func: Callable[[T], R | Awaitable[R]]) -> 'AsyncIter[R]':  # type: ignore
         """Return an iterator that applies function to every item of iterable,
         yielding the results"""
         async for item in self:
@@ -64,11 +92,23 @@ class AsyncIter(Generic[T]):
             yield result
 
     @async_iter
-    async def skip(self, count: int) -> 'AsyncIter[T]':
+    async def skip(self, count: int) -> 'AsyncIter[T]':  # type: ignore
         """Skip 'count' items from iterator"""
         async for index, item in self.enumerate():
             if index >= count:
                 yield item
+
+    @async_iter
+    async def skip_while(self, func: ConditionFunc) -> 'AsyncIter[T]':  # type: ignore
+        """Skips leading elements while conditional is satisfied"""
+        async for item in self:  # pragma: no cover
+            result = func(item)
+            if iscoroutine(result):
+                result = await result
+            if result:
+                break
+
+            yield item
 
     async def count(self) -> int:
         """Return count of items in iterator"""
@@ -78,7 +118,7 @@ class AsyncIter(Generic[T]):
         return count_
 
     async def first_where(self, func: ConditionFunc) -> T:
-        """Find first item for which the condition is met
+        """Find first item for which the conditional is satisfied
 
         :raise ValueError: the item not found"""
         async for item in self:
@@ -90,7 +130,7 @@ class AsyncIter(Generic[T]):
         raise ValueError('Item not found')
 
     @async_iter
-    async def where(self, func: ConditionFunc) -> 'AsyncIter[T]':
+    async def where(self, func: ConditionFunc) -> 'AsyncIter[T]':  # type: ignore
         """Filter item by condition"""
         async for item in self:
             result = func(item)
@@ -100,8 +140,8 @@ class AsyncIter(Generic[T]):
                 yield item
 
     @async_iter
-    async def take_while(self, func: ConditionFunc) -> 'AsyncIter[T]':
-        """Take items while the condition is met"""
+    async def take_while(self, func: ConditionFunc) -> 'AsyncIter[T]':  # type: ignore
+        """Take items while the conditional is satisfied"""
         async for item in self:
             result = func(item)
             if iscoroutine(result):
@@ -110,3 +150,45 @@ class AsyncIter(Generic[T]):
                 yield item
             else:
                 break
+
+    async def first(self) -> T:
+        """Returns the first item"""
+        try:
+            return await anext(self)  # type: ignore
+        except StopAsyncIteration:
+            raise ValueError('Iterable is empty')
+
+    async def last(self) -> T:
+        """Returns the last item"""
+        last_item = initial = object()
+        async for item in self:
+            last_item = item
+
+        if last_item is initial:
+            raise ValueError('Iterable is empty')
+
+        return last_item   # type: ignore
+
+    @async_iter
+    async def chain(self, *iterables: AsyncIterable[T]) -> 'AsyncIter[T]':  # type: ignore
+        """Chain with other iterables"""
+        async for item in self:
+            yield item
+
+        for iterable in iterables:
+            async for item in iterable:
+                yield item
+
+    async def all(self) -> bool:
+        """Checks whether all element of this iterable satisfies"""
+        async for item in self:
+            if not bool(item):  # pragma: no cover
+                return False
+        return True
+
+    async def any(self) -> bool:
+        """Checks whether any element of this iterable satisfies"""
+        async for item in self:
+            if bool(item):  # pragma: no cover
+                return True
+        return False
