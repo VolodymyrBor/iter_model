@@ -1,6 +1,6 @@
 import itertools
 from functools import wraps
-from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias
+from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
 T = TypeVar('T')
 R = TypeVar('R')
@@ -25,12 +25,23 @@ class SyncIter(Generic[T]):
     def __init__(self, it: Iterable[T]):
         self._it = iter(it)
 
-    def __iter__(self) -> Iterable[T]:
+    def __iter__(self) -> Iterator[T]:
         return self._it
 
+    def __next__(self) -> T:
+        return next(self._it)
+
     def to_list(self) -> list[T]:
-        """Convert self to list"""
+        """Convert to list"""
         return list(self)
+
+    def to_tuple(self) -> tuple[T, ...]:
+        """Convert to tuple"""
+        return tuple(self)
+
+    def to_set(self) -> set[T]:
+        """Convert to set"""
+        return set(self)
 
     def enumerate(self, start: int = 0) -> 'SyncIter[tuple[int, T]]':
         """Returns a tuple containing a count (from start which defaults to 0)
@@ -51,11 +62,15 @@ class SyncIter(Generic[T]):
         return SyncIter(map(func, self))
 
     @sync_iter
-    def skip(self, count: int) -> 'SyncIter[T]':
+    def skip(self, count: int) -> 'SyncIter[T]':  # type: ignore
         """Skip 'count' items from iterator"""
         for index, item in self.enumerate():
             if index >= count:
                 yield item
+
+    def skip_while(self, func: ConditionFunc) -> 'SyncIter[T]':
+        """Skips leading elements while conditional is satisfied"""
+        return SyncIter(itertools.dropwhile(func, self))
 
     def count(self) -> int:
         """Return count of items in iterator"""
@@ -65,7 +80,7 @@ class SyncIter(Generic[T]):
         return count_
 
     def first_where(self, func: ConditionFunc) -> T:
-        """Find first item for which the condition is met
+        """Find first item for which the conditional is satisfied
 
         :raise ValueError: the item not found
         """
@@ -79,5 +94,35 @@ class SyncIter(Generic[T]):
         return SyncIter(filter(func, self))
 
     def take_while(self, func: ConditionFunc) -> 'SyncIter[T]':
-        """Take items while the condition is met"""
+        """Take items while the conditional is satisfied"""
         return SyncIter(itertools.takewhile(func, self))
+
+    def first(self) -> T:
+        """Returns the first item"""
+        try:
+            return next(self)
+        except StopIteration:
+            raise ValueError('Iterable is empty')
+
+    def last(self) -> T:
+        """Returns the last item"""
+        last_item = initial = object()
+        for item in self:
+            last_item = item
+
+        if last_item is initial:
+            raise ValueError('Iterable is empty')
+
+        return last_item  # type: ignore
+
+    def chain(self, *iterables: Iterable[T]) -> 'SyncIter[T]':
+        """Chain with other iterables"""
+        return SyncIter(itertools.chain(self, *iterables))
+
+    def all(self) -> bool:
+        """Checks whether all element of this iterable satisfies"""
+        return all(self)
+
+    def any(self) -> bool:
+        """Checks whether any element of this iterable satisfies"""
+        return any(self)
