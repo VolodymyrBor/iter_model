@@ -114,7 +114,7 @@ asyncio.run(main())
 - ```first_where()```
 - ```where()```
 - ```take_while()```
-- ```fisrt()```
+- ```first()```
 - ```last()```
 - ```chain()```
 - ```all()```
