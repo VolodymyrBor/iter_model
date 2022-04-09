@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iter_model"
-version = "0.1.3"
+version = "0.2.0"
 description = "Provides models for convenient and efficient iteration"
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 license = "MIT"
@@ -16,6 +16,7 @@ pytest = "^7.1.1"
 pytest-asyncio = "^0.18.3"
 pytest-cov = "^3.0.0"
 pytest-flake8 = "^1.1.1"
+pytest-mypy = "^0.9.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
