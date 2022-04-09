@@ -13,6 +13,7 @@
 [![Supported Versions](https://img.shields.io/badge/coverage-100%25-green)](https://shields.io/)
 [![Supported Versions](https://img.shields.io/badge/poetry-✅-grey)](https://shields.io/)
 [![Supported Versions](https://img.shields.io/badge/async-✅-grey)](https://shields.io/)
+[![Supported Versions](https://img.shields.io/badge/mypy-✅-grey)](https://shields.io/)
 
 ## Description
 
@@ -102,11 +103,19 @@ asyncio.run(main())
 ### SyncIter/AsyncIter provide the following methods
 
 - ```to_list()```
+- ```to_tuple()```
+- ```to_set()```
 - ```enumerate()```
 - ```take()```
 - ```map()```
 - ```skip()```
+- ```skip_while()```
 - ```count()```
 - ```first_where()```
 - ```where()```
 - ```take_while()```
+- ```fisrt()```
+- ```last()```
+- ```chain()```
+- ```all()```
+- ```any()```
