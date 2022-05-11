@@ -147,6 +147,45 @@ class TestSyncIter:
     def test_any(self, items):
         assert SyncIter(items).any() == any(items)
 
+    def test_next(self):
+        it1 = SyncIter(range(5))
+        it2 = SyncIter(range(5))
+        assert it1.next() == it2.first()
+
+    def test_next_empty(self):
+        with pytest.raises(StopIteration):
+            SyncIter([]).next()
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', True), ('b', False), ('c', False)]),
+        ),
+    )
+    def test_mark_first(self, it, expected):
+        assert SyncIter(it).mark_first().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', False), ('b', False), ('c', True)]),
+        ),
+    )
+    def test_mark_last(self, it, expected):
+        assert SyncIter(it).mark_last().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', True, False), ('b', False, False), ('c', False, True)]),
+        ),
+    )
+    def test_mark_first_last(self, it, expected):
+        assert SyncIter(it).mark_first_last().to_list() == expected
+
 
 def test_sync_iter():
     r = range(10)
