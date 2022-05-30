@@ -111,7 +111,7 @@ class TestSyncIter:
         assert SyncIter(items).first() == items[0]
 
     def test_first_err(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(StopIteration):
             assert SyncIter([]).first()
 
     def test_last(self):
@@ -119,7 +119,7 @@ class TestSyncIter:
         assert SyncIter(items).last() == items[-1]
 
     def test_last_err(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(StopIteration):
             assert SyncIter([]).last()
 
     def test_chain(self):

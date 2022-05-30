@@ -87,7 +87,7 @@ class SyncIter(Generic[T]):
         for item in self:
             if func(item):
                 return item
-        raise StopIteration('Item not found')
+        raise ValueError('Item not found')
 
     def where(self, func: ConditionFunc) -> 'SyncIter[T]':
         """Filter item by condition"""
