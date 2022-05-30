@@ -151,12 +151,12 @@ class AsyncIter(Generic[T]):
             else:
                 break
 
-    async def first(self) -> T:
+    async def next(self) -> T:
         """Returns the first item"""
         try:
             return await anext(self)  # type: ignore
         except StopAsyncIteration:
-            raise ValueError('Iterable is empty')
+            raise StopAsyncIteration('Iterable is empty')
 
     async def last(self) -> T:
         """Returns the last item"""
@@ -165,7 +165,7 @@ class AsyncIter(Generic[T]):
             last_item = item
 
         if last_item is initial:
-            raise ValueError('Iterable is empty')
+            raise StopAsyncIteration('Iterable is empty')
 
         return last_item   # type: ignore
 
@@ -192,3 +192,43 @@ class AsyncIter(Generic[T]):
             if bool(item):  # pragma: no cover
                 return True
         return False
+
+    async def first(self) -> T:
+        return await self.next()
+
+    @async_iter
+    async def mark_first(self) -> 'AsyncIter[tuple[T, bool]]':
+        try:
+            first = await self.next()
+        except StopAsyncIteration:
+            return
+
+        yield first, True
+        async for item in self:
+            yield item, False
+
+    @async_iter
+    async def mark_last(self) -> 'AsyncIter[tuple[T, bool]]':
+        try:
+            previous_item = await self.next()
+        except StopAsyncIteration:
+            return
+
+        async for current_item in self:
+            yield previous_item, False
+            previous_item = current_item
+        yield previous_item, True
+
+    @async_iter
+    async def mark_first_last(self) -> 'AsyncIter[tuple[T, bool, bool]]':
+        try:
+            previous_item = await self.next()
+        except StopAsyncIteration:
+            return
+
+        first = True
+        async for current_item in self:
+            yield previous_item, first, False
+            first = False
+            previous_item = current_item
+        yield previous_item, first, True
