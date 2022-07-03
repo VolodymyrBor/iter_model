@@ -22,6 +22,8 @@ def sync_iter(func: Callable[P, Iterable[T]]) -> Callable[P, 'SyncIter[T]']:
 
 class SyncIter(Generic[T]):
 
+    __slots__ = ('_it', )
+
     def __init__(self, it: Iterable[T]):
         self._it = iter(it)
 
