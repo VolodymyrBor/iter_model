@@ -134,7 +134,7 @@ class SyncIter(Generic[T]):
         return self.next()
 
     @sync_iter
-    def mark_first(self) -> 'SyncIter[tuple[T, bool]]':
+    def mark_first(self) -> 'SyncIter[tuple[T, bool]]':  # type: ignore
         """Mark first item. Yields: tuple[item, is_first]"""
         try:
             first = self.next()
@@ -145,7 +145,7 @@ class SyncIter(Generic[T]):
         yield from self.map(lambda item: (item, False))
 
     @sync_iter
-    def mark_last(self) -> 'SyncIter[tuple[T, bool]]':
+    def mark_last(self) -> 'SyncIter[tuple[T, bool]]':  # type: ignore
         """Mark last item. Yields: tuple[item, is_last]"""
         try:
             previous_item = self.next()
@@ -158,7 +158,7 @@ class SyncIter(Generic[T]):
         yield previous_item, True
 
     @sync_iter
-    def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':
+    def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':  # type: ignore
         """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
         try:
             previous_item = self.next()
