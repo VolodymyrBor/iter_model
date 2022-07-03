@@ -32,6 +32,8 @@ def async_iter(func: Callable[P, AsyncIterable[T]]) -> Callable[P, 'AsyncIter[T]
 
 class AsyncIter(Generic[T]):
 
+    __slots__ = ('_it', )
+
     def __init__(self, it: AsyncIterable[T]):
         self._it = aiter(it)
 
