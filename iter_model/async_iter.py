@@ -200,7 +200,7 @@ class AsyncIter(Generic[T]):
         return await self.next()
 
     @async_iter
-    async def mark_first(self) -> 'AsyncIter[tuple[T, bool]]':
+    async def mark_first(self) -> 'AsyncIter[tuple[T, bool]]':  # type: ignore
         """Mark first item. Yields: tuple[item, is_first]"""
         try:
             first = await self.next()
@@ -212,7 +212,7 @@ class AsyncIter(Generic[T]):
             yield item, False
 
     @async_iter
-    async def mark_last(self) -> 'AsyncIter[tuple[T, bool]]':
+    async def mark_last(self) -> 'AsyncIter[tuple[T, bool]]':  # type: ignore
         """Mark last item. Yields: tuple[item, is_last]"""
         try:
             previous_item = await self.next()
@@ -225,7 +225,7 @@ class AsyncIter(Generic[T]):
         yield previous_item, True
 
     @async_iter
-    async def mark_first_last(self) -> 'AsyncIter[tuple[T, bool, bool]]':
+    async def mark_first_last(self) -> 'AsyncIter[tuple[T, bool, bool]]':  # type: ignore
         """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
         try:
             previous_item = await self.next()
