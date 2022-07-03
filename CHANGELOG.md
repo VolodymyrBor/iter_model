@@ -48,4 +48,4 @@
 [0.1.2]: https://github.com/VolodymyrBor/iter_model/pull/1
 [0.1.3]: https://github.com/VolodymyrBor/iter_model/pull/4
 [0.2.0]: https://github.com/VolodymyrBor/iter_model/pull/7
-[1.0.0]: https://github.com/VolodymyrBor/iter_model/pull/9
+[1.0.0]: https://github.com/VolodymyrBor/iter_model/pull/8
