@@ -111,7 +111,7 @@ class TestSyncIter:
         assert SyncIter(items).first() == items[0]
 
     def test_first_err(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(StopIteration):
             assert SyncIter([]).first()
 
     def test_last(self):
@@ -119,7 +119,7 @@ class TestSyncIter:
         assert SyncIter(items).last() == items[-1]
 
     def test_last_err(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(StopIteration):
             assert SyncIter([]).last()
 
     def test_chain(self):
@@ -146,6 +146,45 @@ class TestSyncIter:
     ))
     def test_any(self, items):
         assert SyncIter(items).any() == any(items)
+
+    def test_next(self):
+        it1 = SyncIter(range(5))
+        it2 = SyncIter(range(5))
+        assert it1.next() == it2.first()
+
+    def test_next_empty(self):
+        with pytest.raises(StopIteration):
+            SyncIter([]).next()
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', True), ('b', False), ('c', False)]),
+        ),
+    )
+    def test_mark_first(self, it, expected):
+        assert SyncIter(it).mark_first().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', False), ('b', False), ('c', True)]),
+        ),
+    )
+    def test_mark_last(self, it, expected):
+        assert SyncIter(it).mark_last().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', True, False), ('b', False, False), ('c', False, True)]),
+        ),
+    )
+    def test_mark_first_last(self, it, expected):
+        assert SyncIter(it).mark_first_last().to_list() == expected
 
 
 def test_sync_iter():

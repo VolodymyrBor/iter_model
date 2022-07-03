@@ -22,6 +22,8 @@ def sync_iter(func: Callable[P, Iterable[T]]) -> Callable[P, 'SyncIter[T]']:
 
 class SyncIter(Generic[T]):
 
+    __slots__ = ('_it', )
+
     def __init__(self, it: Iterable[T]):
         self._it = iter(it)
 
@@ -82,7 +84,7 @@ class SyncIter(Generic[T]):
     def first_where(self, func: ConditionFunc) -> T:
         """Find first item for which the conditional is satisfied
 
-        :raise ValueError: the item not found
+        :raise StopIteration: the item not found
         """
         for item in self:
             if func(item):
@@ -97,12 +99,12 @@ class SyncIter(Generic[T]):
         """Take items while the conditional is satisfied"""
         return SyncIter(itertools.takewhile(func, self))
 
-    def first(self) -> T:
+    def next(self) -> T:
         """Returns the first item"""
         try:
             return next(self)
         except StopIteration:
-            raise ValueError('Iterable is empty')
+            raise StopIteration('Iterable is empty')
 
     def last(self) -> T:
         """Returns the last item"""
@@ -111,7 +113,7 @@ class SyncIter(Generic[T]):
             last_item = item
 
         if last_item is initial:
-            raise ValueError('Iterable is empty')
+            raise StopIteration('Iterable is empty')
 
         return last_item  # type: ignore
 
@@ -126,3 +128,46 @@ class SyncIter(Generic[T]):
     def any(self) -> bool:
         """Checks whether any element of this iterable satisfies"""
         return any(self)
+
+    def first(self) -> T:
+        """Returns first item"""
+        return self.next()
+
+    @sync_iter
+    def mark_first(self) -> 'SyncIter[tuple[T, bool]]':  # type: ignore
+        """Mark first item. Yields: tuple[item, is_first]"""
+        try:
+            first = self.next()
+        except StopIteration:
+            return
+
+        yield first, True
+        yield from self.map(lambda item: (item, False))
+
+    @sync_iter
+    def mark_last(self) -> 'SyncIter[tuple[T, bool]]':  # type: ignore
+        """Mark last item. Yields: tuple[item, is_last]"""
+        try:
+            previous_item = self.next()
+        except StopIteration:
+            return
+
+        for current_item in self:
+            yield previous_item, False
+            previous_item = current_item
+        yield previous_item, True
+
+    @sync_iter
+    def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':  # type: ignore
+        """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
+        try:
+            previous_item = self.next()
+        except StopIteration:
+            return
+
+        first = True
+        for current_item in self:
+            yield previous_item, first, False
+            first = False
+            previous_item = current_item
+        yield previous_item, first, True
