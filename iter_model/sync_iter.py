@@ -128,10 +128,12 @@ class SyncIter(Generic[T]):
         return any(self)
 
     def first(self) -> T:
+        """Returns first item"""
         return self.next()
 
     @sync_iter
     def mark_first(self) -> 'SyncIter[tuple[T, bool]]':
+        """Mark first item. Yields: tuple[item, is_first]"""
         try:
             first = self.next()
         except StopIteration:
@@ -142,6 +144,7 @@ class SyncIter(Generic[T]):
 
     @sync_iter
     def mark_last(self) -> 'SyncIter[tuple[T, bool]]':
+        """Mark last item. Yields: tuple[item, is_last]"""
         try:
             previous_item = self.next()
         except StopIteration:
@@ -154,6 +157,7 @@ class SyncIter(Generic[T]):
 
     @sync_iter
     def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':
+        """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
         try:
             previous_item = self.next()
         except StopIteration:
