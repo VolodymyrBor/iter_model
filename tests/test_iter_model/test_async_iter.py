@@ -118,7 +118,7 @@ class TestAsyncIter:
         assert await AsyncIter.from_sync(items).first() == items[0]
 
     async def test_first_err(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(StopAsyncIteration):
             assert await AsyncIter.from_sync([]).first()
 
     async def test_last(self):
@@ -126,7 +126,7 @@ class TestAsyncIter:
         assert await AsyncIter.from_sync(items).last() == items[-1]
 
     async def test_last_err(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(StopAsyncIteration):
             assert await AsyncIter.from_sync([]).last()
 
     async def test_chain(self):
@@ -153,6 +153,45 @@ class TestAsyncIter:
     ))
     async def test_any(self, items):
         assert await AsyncIter.from_sync(items).any() == any(items)
+
+    async def test_next(self):
+        it1 = AsyncIter.from_sync(range(5))
+        it2 = AsyncIter.from_sync(range(5))
+        assert await it1.next() == await it2.first()
+
+    async def test_next_empty(self):
+        with pytest.raises(StopAsyncIteration):
+            await AsyncIter.from_sync([]).next()
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', True), ('b', False), ('c', False)]),
+        ),
+    )
+    async def test_mark_first(self, it, expected):
+        assert await AsyncIter.from_sync(it).mark_first().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', False), ('b', False), ('c', True)]),
+        ),
+    )
+    async def test_mark_last(self, it, expected):
+        assert await AsyncIter.from_sync(it).mark_last().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'expected'),
+        (
+            ([], []),
+            (['a', 'b', 'c'], [('a', True, False), ('b', False, False), ('c', False, True)]),
+        ),
+    )
+    async def test_mark_first_last(self, it, expected):
+        assert await AsyncIter.from_sync(it).mark_first_last().to_list() == expected
 
 
 async def test_async_iter():
