@@ -235,11 +235,11 @@ class TestSyncIter:
         ),
     )
     def test_reduce(self, it: Iterable, func: Callable, initial: int):
-        assert SyncIter(it).reduce(key=func, initial=initial) == functools.reduce(func, it, initial)
+        assert SyncIter(it).reduce(func=func, initial=initial) == functools.reduce(func, it, initial)
 
     def test_reduce_empty(self):
         with pytest.raises(ValueError):
-            SyncIter(tuple()).reduce(key=operator.add)
+            SyncIter(tuple()).reduce(func=operator.add)
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -284,10 +284,7 @@ class TestSyncIter:
     def test_zip_longest(self, iterables: Iterable[Iterable], fillvalue: Any):
         r = range(3)
         it = SyncIter(r)
-        assert it.zip_longest(
-            *iterables,
-            fillvalue=fillvalue,
-        ).to_list() == list(itertools.zip_longest(
+        assert it.zip_longest(*iterables, fillvalue=fillvalue).to_list() == list(itertools.zip_longest(
             r,
             *iterables,
             fillvalue=fillvalue,
