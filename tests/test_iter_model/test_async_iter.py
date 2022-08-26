@@ -245,13 +245,13 @@ class TestAsyncIter:
     )
     async def test_reduce(self, it: Iterable, func: Callable, initial: int):
         assert await AsyncIter.from_sync(it).reduce(
-            key=func,
+            func=func,
             initial=initial,
         ) == functools.reduce(func, it, initial)
 
     async def test_reduce_empty(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).reduce(key=operator.add)
+            await AsyncIter.from_sync(tuple()).reduce(func=operator.add)
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
