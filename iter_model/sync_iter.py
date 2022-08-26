@@ -203,3 +203,26 @@ class SyncIter(Generic[T]):
 
     def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[R]':
         return SyncIter(itertools.accumulate(self, func=func, initial=initial))
+
+    @sync_iter
+    def append_left(self, item: T) -> 'SyncIter[T]':
+        yield item
+        yield from self
+
+    @sync_iter
+    def append_right(self, item: T) -> 'SyncIter[T]':
+        yield from self
+        yield item
+
+    @sync_iter
+    def append_at(self, index: int, item: T) -> 'SyncIter[T]':
+        for i, item_ in self.enumerate():
+            if i == index:
+                yield item
+            yield item_
+
+    def zip(self, *args: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[T, ...]]':
+        return SyncIter(zip(self, *args, strict=strict))
+
+    def zip_longest(self, *args: Iterable[T], fillvalue: R = None) -> 'SyncIter[tuple[T | R, ...]]':
+        return SyncIter(itertools.zip_longest(self, *args, fillvalue=fillvalue))
