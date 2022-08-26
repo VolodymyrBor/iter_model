@@ -130,11 +130,11 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.chain(self, *iterables))
 
     def all(self) -> bool:
-        """Checks whether all element of this iterable satisfies"""
+        """Checks whether all elements of this iterable are true"""
         return all(self)
 
     def any(self) -> bool:
-        """Checks whether any element of this iterable satisfies"""
+        """Checks whether any element of this iterable is true"""
         return any(self)
 
     def first(self) -> T:
