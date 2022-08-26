@@ -179,14 +179,14 @@ class AsyncIter(Generic[T]):
                 yield item
 
     async def all(self) -> bool:
-        """Checks whether all element of this iterable satisfies"""
+        """Checks whether all elements of this iterable are true"""
         async for item in self:
             if not bool(item):  # pragma: no cover
                 return False
         return True
 
     async def any(self) -> bool:
-        """Checks whether any element of this iterable satisfies"""
+        """Checks whether any element of this iterable is true"""
         async for item in self:
             if bool(item):  # pragma: no cover
                 return True
