@@ -317,8 +317,8 @@ class AsyncIter(Generic[T]):
             yield item_
 
     @async_iter
-    async def zip(self, *args: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':
-        iterables = (self, *args)
+    async def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':
+        iterables = (self, *iterables)
         while True:
             batch = []
             for it in iterables:
@@ -332,8 +332,8 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def zip_longest(self, *args: AsyncIterable[T], fillvalue: R = None) -> 'AsyncIter[list[T | R]]':
-        iterables = (self, *args)
+    async def zip_longest(self, *iterables: AsyncIterable[T], fillvalue: R = None) -> 'AsyncIter[list[T | R]]':
+        iterables = (self, *iterables)
         while True:
             batch = []
             batch_has_any_value = False
