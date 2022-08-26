@@ -285,16 +285,64 @@ class AsyncIter(Generic[T]):
     @async_iter
     async def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'AsyncIter[R]':
         total = initial
-        is_empty = False
         if total is None:
             try:
                 total = await self.next()
             except StopAsyncIteration:
-                is_empty = True
+                return
 
-        if not is_empty or initial is not None:
-            func = asyncify(func)
+        func = asyncify(func)
+        yield total
+        async for item in self:
+            total = await func(total, item)
             yield total
-            async for item in self:
-                total = await func(total, item)
-                yield total
+
+    @async_iter
+    async def append_left(self, item: T) -> 'AsyncIter[T]':
+        yield item
+        async for item_ in self:
+            yield item_
+
+    @async_iter
+    async def append_right(self, item: T) -> 'AsyncIter[T]':
+        async for item_ in self:
+            yield item_
+        yield item
+
+    @async_iter
+    async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':
+        async for i, item_ in self.enumerate():
+            if i == index:
+                yield item
+            yield item_
+
+    @async_iter
+    async def zip(self, *args: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':
+        iterables = (self, *args)
+        while True:
+            batch = []
+            for it in iterables:
+                try:
+                    batch.append(await anext(it))
+                except StopAsyncIteration:
+                    if not strict:
+                        return
+            if len(batch) != len(iterables):
+                raise ValueError('lengths of iterables are not the same')
+            yield batch
+
+    @async_iter
+    async def zip_longest(self, *args: AsyncIterable[T], fillvalue: R = None) -> 'AsyncIter[list[T | R]]':
+        iterables = (self, *args)
+        while True:
+            batch = []
+            batch_has_any_value = False
+            for it in iterables:
+                try:
+                    batch.append(await anext(it))
+                    batch_has_any_value = True
+                except StopAsyncIteration:
+                    batch.append(fillvalue)
+            if not batch_has_any_value:
+                return
+            yield batch
