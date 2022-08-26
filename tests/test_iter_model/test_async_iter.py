@@ -1,7 +1,7 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Any
 
 import pytest
 
@@ -267,6 +267,39 @@ class TestAsyncIter:
             func=func,
             initial=initial
         ).to_list() == list(itertools.accumulate(it, func, initial=initial))
+
+    @pytest.mark.parametrize(
+        ('iterables',),
+        (
+            ((range(5), range(5)),),
+            ((range(5), range(3)),),
+            ((range(3), range(5)),),
+        ),
+    )
+    async def test_zip(self, iterables: Iterable[Iterable]):
+        r = range(3)
+        it = AsyncIter.from_sync(r)
+        assert await it.zip(*map(AsyncIter.from_sync, iterables)).to_list() == list(map(list, zip(r, *iterables)))
+
+    async def test_zip_strict(self):
+        with pytest.raises(ValueError):
+            assert await AsyncIter.from_sync(range(3)).zip(AsyncIter.from_sync(range(4)), strict=True).to_list()
+
+    @pytest.mark.parametrize(
+        ('iterables', 'fillvalue'),
+        (
+            ((range(5), range(5)), None),
+            ((range(5), range(3)), 1),
+            ((range(3), range(5)), 'string'),
+        ),
+    )
+    async def test_zip_longest(self, iterables: Iterable[Iterable], fillvalue: Any):
+        r = range(3)
+        it = AsyncIter.from_sync(r)
+        assert await it.zip_longest(
+            *map(AsyncIter.from_sync, iterables),
+            fillvalue=fillvalue,
+        ).to_list() == list(map(list, itertools.zip_longest(r, *iterables, fillvalue=fillvalue)))
 
 
 async def test_async_iter():

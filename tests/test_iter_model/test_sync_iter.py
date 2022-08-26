@@ -1,7 +1,7 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Any
 
 import pytest
 
@@ -255,6 +255,43 @@ class TestSyncIter:
             func=func,
             initial=initial
         ).to_list() == list(itertools.accumulate(it, func, initial=initial))
+
+    @pytest.mark.parametrize(
+        ('iterables', ),
+        (
+            ((range(5), range(5)), ),
+            ((range(5), range(3)), ),
+            ((range(3), range(5)), ),
+        ),
+    )
+    def test_zip(self, iterables: Iterable[Iterable]):
+        r = range(3)
+        it = SyncIter(r)
+        assert it.zip(*iterables).to_list() == list(zip(r, *iterables))
+
+    def test_zip_strict(self):
+        with pytest.raises(ValueError):
+            assert SyncIter(range(3)).zip(range(4), strict=True).to_list()
+
+    @pytest.mark.parametrize(
+        ('iterables', 'fillvalue'),
+        (
+            ((range(5), range(5)), None),
+            ((range(5), range(3)), 1),
+            ((range(3), range(5)), 'string'),
+        ),
+    )
+    def test_zip_longest(self, iterables: Iterable[Iterable], fillvalue: Any):
+        r = range(3)
+        it = SyncIter(r)
+        assert it.zip_longest(
+            *iterables,
+            fillvalue=fillvalue,
+        ).to_list() == list(itertools.zip_longest(
+            r,
+            *iterables,
+            fillvalue=fillvalue,
+        ))
 
 
 def test_sync_iter():

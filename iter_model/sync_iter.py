@@ -221,8 +221,8 @@ class SyncIter(Generic[T]):
                 yield item
             yield item_
 
-    def zip(self, *args: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[T, ...]]':
-        return SyncIter(zip(self, *args, strict=strict))
+    def zip(self, *iterables: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[T, ...]]':
+        return SyncIter(zip(self, *iterables, strict=strict))
 
     def zip_longest(self, *args: Iterable[T], fillvalue: R = None) -> 'SyncIter[tuple[T | R, ...]]':
         return SyncIter(itertools.zip_longest(self, *args, fillvalue=fillvalue))
