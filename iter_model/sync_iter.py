@@ -1,11 +1,19 @@
+import functools
 import itertools
+import operator
 from functools import wraps
 from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
 T = TypeVar('T')
 R = TypeVar('R')
 P = ParamSpec('P')
+DefaultT = TypeVar('DefaultT')
+
+KeyFunc: TypeAlias = Callable[[T], R]
+BinaryFunc: TypeAlias = Callable[[T, T], R]
 ConditionFunc: TypeAlias = Callable[[T], bool]
+
+_EMPTY = object()
 
 
 def sync_iter(func: Callable[P, Iterable[T]]) -> Callable[P, 'SyncIter[T]']:
@@ -171,3 +179,27 @@ class SyncIter(Generic[T]):
             first = False
             previous_item = current_item
         yield previous_item, first, True
+
+    def reduce(self, key: BinaryFunc, initial: T = _EMPTY) -> R | DefaultT:
+        if initial is _EMPTY:
+            try:
+                return functools.reduce(key, self)
+            except TypeError:
+                raise ValueError('Iterator is empty')
+        else:
+            return functools.reduce(key, self, initial)
+
+    def max(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+        if default is _EMPTY:
+            return max(self, key=key)
+        else:
+            return max(self, key=key, default=default)
+
+    def min(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+        if default is _EMPTY:
+            return min(self, key=key)
+        else:
+            return min(self, key=key, default=default)
+
+    def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[R]':
+        return SyncIter(itertools.accumulate(self, func=func, initial=initial))

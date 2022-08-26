@@ -1,5 +1,7 @@
+import functools
 import itertools
-from typing import Callable
+import operator
+from typing import Callable, Iterable
 
 import pytest
 
@@ -185,6 +187,74 @@ class TestSyncIter:
     )
     def test_mark_first_last(self, it, expected):
         assert SyncIter(it).mark_first_last().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'key'),
+        (
+            (range(5), None),
+            (range(5), int.bit_count),
+            ((-10, 10), None),
+        ),
+    )
+    def test_max(self, it: Iterable, key: Callable):
+        assert SyncIter(it).max(key=key) == max(it, key=key)
+
+    def test_max_default(self):
+        default = 'default'
+        assert SyncIter(tuple()).max(default=default) == default
+
+    def test_max_empty_error(self):
+        with pytest.raises(ValueError):
+            SyncIter(tuple()).max()
+
+    @pytest.mark.parametrize(
+        ('it', 'key'),
+        (
+            (range(5), None),
+            (range(5), int.bit_count),
+            ((-10, 10), None),
+        ),
+    )
+    def test_min(self, it: Iterable, key: Callable):
+        assert SyncIter(it).min(key=key) == min(it, key=key)
+
+    def test_min_default(self):
+        default = 'default'
+        assert SyncIter(tuple()).min(default=default) == default
+
+    def test_min_empty_error(self):
+        with pytest.raises(ValueError):
+            SyncIter(tuple()).min()
+
+    @pytest.mark.parametrize(
+        ('it', 'func', 'initial'),
+        (
+            (range(5), operator.add, 1),
+            (range(5), operator.sub, -10),
+            ((-10, 10), operator.mul, 20),
+        ),
+    )
+    def test_reduce(self, it: Iterable, func: Callable, initial: int):
+        assert SyncIter(it).reduce(key=func, initial=initial) == functools.reduce(func, it, initial)
+
+    def test_reduce_empty(self):
+        with pytest.raises(ValueError):
+            SyncIter(tuple()).reduce(key=operator.add)
+
+    @pytest.mark.parametrize(
+        ('it', 'func', 'initial'),
+        (
+            (range(5), operator.add, 1),
+            (range(5), operator.sub, -10),
+            ((-10, 10), operator.mul, 20),
+            (tuple(), operator.mul, None),  # empty
+        ),
+    )
+    def test_accumulate(self, it: Iterable, func: Callable, initial: int):
+        assert SyncIter(it).accumulate(
+            func=func,
+            initial=initial
+        ).to_list() == list(itertools.accumulate(it, func, initial=initial))
 
 
 def test_sync_iter():
