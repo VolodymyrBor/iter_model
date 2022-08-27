@@ -390,3 +390,14 @@ class AsyncIter(Generic[T]):
             if not batch_has_any_value:
                 return
             yield batch
+
+    @async_iter
+    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
+        it = self.skip(start)
+
+        if stop is not None:
+            it = it.take(stop - start)
+
+        async for i, item in it.enumerate():
+            if i % step == 0:
+                yield item

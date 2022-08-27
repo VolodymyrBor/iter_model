@@ -301,6 +301,22 @@ class TestAsyncIter:
             fillvalue=fillvalue,
         ).to_list() == list(map(list, itertools.zip_longest(r, *iterables, fillvalue=fillvalue)))
 
+    @pytest.mark.parametrize(
+        ('iterable', 'slice_'),
+        (
+            (range(10), {'start': 0}),
+            (range(10), {'start': 2, 'stop': 7, 'step': 2}),
+            (range(10), {'start': 4, 'stop': 7}),
+            (range(10), {'start': 4, 'stop': 8, 'step': 3}),
+        ),
+    )
+    async def test_slice(self, iterable: Iterable, slice_: dict):
+        assert await AsyncIter.from_sync(iterable).slice(**slice_).to_list() == list(iterable)[slice(
+            slice_.get('start'),
+            slice_.get('stop'),
+            slice_.get('step'),
+        )]
+
 
 async def test_async_iter():
     r = range(10)

@@ -132,3 +132,4 @@ asyncio.run(main())
 - ```append_at()```
 - ```zip()```
 - ```zip_longest()```
+- ```slice()```

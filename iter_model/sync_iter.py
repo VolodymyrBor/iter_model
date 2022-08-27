@@ -270,3 +270,6 @@ class SyncIter(Generic[T]):
         :param fillvalue: when the shorter iterables are exhausted, the fillvalue is substituted in their place
         """
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
+
+    def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+        return SyncIter(itertools.islice(self, start, stop, step))
