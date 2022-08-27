@@ -246,10 +246,13 @@ class SyncIter(Generic[T]):
     @sync_iter
     def append_at(self, index: int, item: T) -> 'SyncIter[T]':
         """Append at the position in to the iterable"""
+        i = 0
         for i, item_ in self.enumerate():
             if i == index:
                 yield item
             yield item_
+        if index > i:
+            yield item
 
     def zip(self, *iterables: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[T, ...]]':
         """The zip object yields n-length tuples, where n is the number of iterables

@@ -341,10 +341,13 @@ class AsyncIter(Generic[T]):
     @async_iter
     async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':
         """Append at the position in to the iterable"""
+        i = 0
         async for i, item_ in self.enumerate():
             if i == index:
                 yield item
             yield item_
+        if index > i:
+            yield item
 
     @async_iter
     async def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':

@@ -306,6 +306,31 @@ class TestSyncIter:
             step=slice_.step,
         ).to_list() == list(iterable)[slice_]
 
+    def test_append_right(self):
+        r = range(5)
+        item = -10
+        assert SyncIter(r).append_right(item).to_list() == [*r, item]
+
+    def test_append_left(self):
+        r = range(5)
+        item = -10
+        assert SyncIter(r).append_left(item).to_list() == [item, *r]
+
+    @pytest.mark.parametrize(
+        'position',
+        (
+            0,
+            3,
+            100,
+        ),
+    )
+    def test_append_at(self, position: int):
+        r = range(5)
+        item = -10
+        l = list(r)
+        l.insert(position, item)
+        assert SyncIter(r).append_at(position, item).to_list() == l
+
 
 def test_sync_iter():
     r = range(10)
