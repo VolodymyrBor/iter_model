@@ -290,6 +290,22 @@ class TestSyncIter:
             fillvalue=fillvalue,
         ))
 
+    @pytest.mark.parametrize(
+        ('iterable', 'slice_'),
+        (
+            (range(10), slice(0, None)),
+            (range(10), slice(3, None, 2)),
+            (range(10), slice(4, 7)),
+            (range(10), slice(4, 7, 3)),
+        ),
+    )
+    def test_slice(self, iterable: Iterable, slice_: slice):
+        assert SyncIter(iterable).slice(
+            start=slice_.start,
+            stop=slice_.stop,
+            step=slice_.step,
+        ).to_list() == list(iterable)[slice_]
+
 
 def test_sync_iter():
     r = range(10)
