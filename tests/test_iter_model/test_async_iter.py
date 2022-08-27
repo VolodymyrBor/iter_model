@@ -317,6 +317,31 @@ class TestAsyncIter:
             slice_.get('step'),
         )]
 
+    async def test_append_right(self):
+        r = range(5)
+        item = -10
+        assert await AsyncIter.from_sync(r).append_right(item).to_list() == [*r, item]
+
+    async def test_append_left(self):
+        r = range(5)
+        item = -10
+        assert await AsyncIter.from_sync(r).append_left(item).to_list() == [item, *r]
+
+    @pytest.mark.parametrize(
+        'position',
+        (
+            0,
+            3,
+            100,
+        ),
+    )
+    async def test_append_at(self, position: int):
+        r = range(5)
+        item = -10
+        l = list(r)
+        l.insert(position, item)
+        assert await AsyncIter.from_sync(r).append_at(position, item).to_list() == l
+
 
 async def test_async_iter():
     r = range(10)
