@@ -30,7 +30,7 @@ jobs:
       # Perma-cache Poetry since we only need it for checking pyproject version
       - name: Cache Poetry
         id: cache-poetry
-        uses: actions/cache@v2.2
+        uses: actions/cache@v3
         with:
           path: ~/.poetry
           key: ${{ matrix.os }}-poetry
@@ -50,7 +50,7 @@ jobs:
         run: poetry check --no-interaction
       - name: Cache dependencies
         id: cache-deps
-        uses: actions/cache@v2.2
+        uses: actions/cache@v3
         with:
           path: ${{github.workspace}}/.venv
           key: ${{ matrix.os }}-${{ hashFiles('**/poetry.lock') }}
