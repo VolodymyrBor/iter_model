@@ -10,9 +10,8 @@ P = ParamSpec('P')
 DefaultT = TypeVar('DefaultT')
 
 KeyFunc: TypeAlias = Callable[[T], R]
-BinaryFunc: TypeAlias = Callable[[T, T], R]
+BinaryFunc: TypeAlias = Callable[[T, T], T]
 ConditionFunc: TypeAlias = Callable[[T], bool]
-
 _EMPTY = object()
 
 
@@ -180,7 +179,11 @@ class SyncIter(Generic[T]):
             previous_item = current_item
         yield previous_item, first, True
 
-    def reduce(self, func: BinaryFunc, initial: T = _EMPTY) -> R | DefaultT:
+    def reduce(
+        self,
+        func: BinaryFunc,
+        initial: T = _EMPTY,  # type: ignore
+    ) -> T | DefaultT:
         """Apply a function of two arguments cumulatively to the items of an iterable,
          from left to right, to reduce the iterable to a single value.
 
@@ -197,7 +200,11 @@ class SyncIter(Generic[T]):
         else:
             return functools.reduce(func, self, initial)
 
-    def max(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+    def max(
+        self,
+        key: KeyFunc | None = None,
+        default: DefaultT = _EMPTY,  # type: ignore
+    ) -> T | DefaultT:
         """Return the biggest item.
 
         :param key: the result of the function will be used to compare the elements.
@@ -206,11 +213,15 @@ class SyncIter(Generic[T]):
         :raise ValueError: when iterable is empty and default value is not provided
         """
         if default is _EMPTY:
-            return max(self, key=key)
+            return max(self, key=key)  # type: ignore
         else:
-            return max(self, key=key, default=default)
+            return max(self, key=key, default=default)  # type: ignore
 
-    def min(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+    def min(
+        self,
+        key: KeyFunc | None = None,
+        default: DefaultT = _EMPTY,  # type: ignore
+    ) -> T | DefaultT:
         """Return the smallest item.
 
         :param key: the result of the function will be used to compare the elements.
@@ -219,11 +230,11 @@ class SyncIter(Generic[T]):
         :raise ValueError: when iterable is empty and default value is not provided
         """
         if default is _EMPTY:
-            return min(self, key=key)
+            return min(self, key=key)  # type: ignore
         else:
-            return min(self, key=key, default=default)
+            return min(self, key=key, default=default)  # type: ignore
 
-    def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[R]':
+    def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[T]':
         """Return series of accumulated sums (by default).
 
         :param func: func[accumulated value, next value], by default operator.add
@@ -232,19 +243,19 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.accumulate(self, func=func, initial=initial))
 
     @sync_iter
-    def append_left(self, item: T) -> 'SyncIter[T]':
+    def append_left(self, item: T) -> 'SyncIter[T]':  # type: ignore
         """Append an item to left of the iterable (start)"""
         yield item
         yield from self
 
     @sync_iter
-    def append_right(self, item: T) -> 'SyncIter[T]':
+    def append_right(self, item: T) -> 'SyncIter[T]':  # type: ignore
         """Append an item to right of the iterable (end)"""
         yield from self
         yield item
 
     @sync_iter
-    def append_at(self, index: int, item: T) -> 'SyncIter[T]':
+    def append_at(self, index: int, item: T) -> 'SyncIter[T]':  # type: ignore
         """Append at the position in to the iterable"""
         i = 0
         for i, item_ in self.enumerate():
