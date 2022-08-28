@@ -11,7 +11,8 @@
    * `zip_longest()`
    * `slice()`
  * 📑 Updated some doc-strings
-
+ * ⚙️ Internal fixes:
+   * Downgrade for flake8, to fix problems in dependencies between flake8 and pytest-flake8: [issue link](https://github.com/tholo/pytest-flake8/issues/87)
 ---
 
 ### [1.0.0] (2022-07-04)
