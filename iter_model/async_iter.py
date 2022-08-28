@@ -9,7 +9,7 @@ from typing import (
     Awaitable,
     TypeAlias,
     AsyncIterable,
-    AsyncIterator,
+    AsyncIterator, cast,
 )
 
 from .async_utils import asyncify
@@ -236,7 +236,11 @@ class AsyncIter(Generic[T]):
             previous_item = current_item
         yield previous_item, first, True
 
-    async def reduce(self, func: BinaryFunc, initial: T = _EMPTY) -> R:
+    async def reduce(
+        self,
+        func: BinaryFunc,
+        initial: T = _EMPTY,  # type: ignore
+    ) -> T | R:
         """Apply a function of two arguments cumulatively to the items of an iterable,
          from left to right, to reduce the iterable to a single value.
 
@@ -254,9 +258,13 @@ class AsyncIter(Generic[T]):
         func = asyncify(func)
         async for item in self:
             initial = await func(initial, item)
-        return initial
+        return cast(T, initial)
 
-    async def max(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+    async def max(
+        self,
+        key: KeyFunc | None = None,
+        default: DefaultT = _EMPTY,  # type: ignore
+    ) -> T | DefaultT:
         """Return the biggest item.
 
         :param key: the result of the function will be used to compare the elements.
@@ -280,7 +288,11 @@ class AsyncIter(Generic[T]):
                 max_item_key = item_key
         return max_item
 
-    async def min(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+    async def min(
+        self,
+        key: KeyFunc | None = None,
+        default: DefaultT = _EMPTY,  # type: ignore
+    ) -> T | DefaultT:
         """Return the smallest item.
 
         :param key: the result of the function will be used to compare the elements.
@@ -305,7 +317,11 @@ class AsyncIter(Generic[T]):
         return max_item
 
     @async_iter
-    async def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'AsyncIter[R]':
+    async def accumulate(  # type: ignore
+        self,
+        func: BinaryFunc = operator.add,
+        initial: T | None = None,
+    ) -> 'AsyncIter[R]':
         """Return series of accumulated sums (by default).
 
         :param func: func[accumulated value, next value], by default operator.add
@@ -325,21 +341,21 @@ class AsyncIter(Generic[T]):
             yield total
 
     @async_iter
-    async def append_left(self, item: T) -> 'AsyncIter[T]':
+    async def append_left(self, item: T) -> 'AsyncIter[T]':  # type: ignore
         """Append an item to left of the iterable (start)"""
         yield item
         async for item_ in self:
             yield item_
 
     @async_iter
-    async def append_right(self, item: T) -> 'AsyncIter[T]':
+    async def append_right(self, item: T) -> 'AsyncIter[T]':  # type: ignore
         """Append an item to right of the iterable (end)"""
         async for item_ in self:
             yield item_
         yield item
 
     @async_iter
-    async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':
+    async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':  # type: ignore
         """Append at the position in to the iterable"""
         i = 0
         async for i, item_ in self.enumerate():
@@ -350,7 +366,7 @@ class AsyncIter(Generic[T]):
             yield item
 
     @async_iter
-    async def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':
+    async def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':  # type: ignore
         """The zip object yields n-length tuples, where n is the number of iterables
         passed as positional arguments to zip().  The i-th element in every tuple
         comes from the i-th iterable argument to zip().  This continues until the
@@ -363,7 +379,7 @@ class AsyncIter(Generic[T]):
             batch = []
             for it in iterables:
                 try:
-                    batch.append(await anext(it))
+                    batch.append(await anext(it))  # type: ignore
                 except StopAsyncIteration:
                     if not strict:
                         return
@@ -372,7 +388,11 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def zip_longest(self, *iterables: AsyncIterable[T], fillvalue: R = None) -> 'AsyncIter[list[T | R]]':
+    async def zip_longest(  # type: ignore
+        self,
+        *iterables: AsyncIterable[T],
+        fillvalue: R = None,
+    ) -> 'AsyncIter[list[T | R]]':
         """The zip object yields n-length tuples, where n is the number of iterables
         passed as positional arguments to zip().  The i-th element in every tuple
         comes from the i-th iterable argument to zip().  This continues until the
@@ -386,7 +406,7 @@ class AsyncIter(Generic[T]):
             batch_has_any_value = False
             for it in iterables:
                 try:
-                    batch.append(await anext(it))
+                    batch.append(await anext(it))  # type: ignore
                     batch_has_any_value = True
                 except StopAsyncIteration:
                     batch.append(fillvalue)
@@ -395,7 +415,7 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
+    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':  # type: ignore
         it = self.skip(start)
 
         if stop is not None:
