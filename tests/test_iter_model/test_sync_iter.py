@@ -1,5 +1,7 @@
+import functools
 import itertools
-from typing import Callable
+import operator
+from typing import Callable, Iterable, Any
 
 import pytest
 
@@ -185,6 +187,149 @@ class TestSyncIter:
     )
     def test_mark_first_last(self, it, expected):
         assert SyncIter(it).mark_first_last().to_list() == expected
+
+    @pytest.mark.parametrize(
+        ('it', 'key'),
+        (
+            (range(5), None),
+            (range(5), int.bit_count),
+            ((-10, 10), None),
+        ),
+    )
+    def test_max(self, it: Iterable, key: Callable):
+        assert SyncIter(it).max(key=key) == max(it, key=key)
+
+    def test_max_default(self):
+        default = 'default'
+        assert SyncIter(tuple()).max(default=default) == default
+
+    def test_max_empty_error(self):
+        with pytest.raises(ValueError):
+            SyncIter(tuple()).max()
+
+    @pytest.mark.parametrize(
+        ('it', 'key'),
+        (
+            (range(5), None),
+            (range(5), int.bit_count),
+            ((-10, 10), None),
+        ),
+    )
+    def test_min(self, it: Iterable, key: Callable):
+        assert SyncIter(it).min(key=key) == min(it, key=key)
+
+    def test_min_default(self):
+        default = 'default'
+        assert SyncIter(tuple()).min(default=default) == default
+
+    def test_min_empty_error(self):
+        with pytest.raises(ValueError):
+            SyncIter(tuple()).min()
+
+    @pytest.mark.parametrize(
+        ('it', 'func', 'initial'),
+        (
+            (range(5), operator.add, 1),
+            (range(5), operator.sub, -10),
+            ((-10, 10), operator.mul, 20),
+        ),
+    )
+    def test_reduce(self, it: Iterable, func: Callable, initial: int):
+        assert SyncIter(it).reduce(func=func, initial=initial) == functools.reduce(func, it, initial)
+
+    def test_reduce_empty(self):
+        with pytest.raises(ValueError):
+            SyncIter(tuple()).reduce(func=operator.add)
+
+    @pytest.mark.parametrize(
+        ('it', 'func', 'initial'),
+        (
+            (range(5), operator.add, 1),
+            (range(5), operator.sub, -10),
+            ((-10, 10), operator.mul, 20),
+            (tuple(), operator.mul, None),  # empty
+        ),
+    )
+    def test_accumulate(self, it: Iterable, func: Callable, initial: int):
+        assert SyncIter(it).accumulate(
+            func=func,
+            initial=initial
+        ).to_list() == list(itertools.accumulate(it, func, initial=initial))
+
+    @pytest.mark.parametrize(
+        ('iterables', ),
+        (
+            ((range(5), range(5)), ),
+            ((range(5), range(3)), ),
+            ((range(3), range(5)), ),
+        ),
+    )
+    def test_zip(self, iterables: Iterable[Iterable]):
+        r = range(3)
+        it = SyncIter(r)
+        assert it.zip(*iterables).to_list() == list(zip(r, *iterables))
+
+    def test_zip_strict(self):
+        with pytest.raises(ValueError):
+            assert SyncIter(range(3)).zip(range(4), strict=True).to_list()
+
+    @pytest.mark.parametrize(
+        ('iterables', 'fillvalue'),
+        (
+            ((range(5), range(5)), None),
+            ((range(5), range(3)), 1),
+            ((range(3), range(5)), 'string'),
+        ),
+    )
+    def test_zip_longest(self, iterables: Iterable[Iterable], fillvalue: Any):
+        r = range(3)
+        it = SyncIter(r)
+        assert it.zip_longest(*iterables, fillvalue=fillvalue).to_list() == list(itertools.zip_longest(
+            r,
+            *iterables,
+            fillvalue=fillvalue,
+        ))
+
+    @pytest.mark.parametrize(
+        ('iterable', 'slice_'),
+        (
+            (range(10), slice(0, None)),
+            (range(10), slice(3, None, 2)),
+            (range(10), slice(4, 7)),
+            (range(10), slice(4, 7, 3)),
+        ),
+    )
+    def test_slice(self, iterable: Iterable, slice_: slice):
+        assert SyncIter(iterable).slice(
+            start=slice_.start,
+            stop=slice_.stop,
+            step=slice_.step,
+        ).to_list() == list(iterable)[slice_]
+
+    def test_append_right(self):
+        r = range(5)
+        item = -10
+        assert SyncIter(r).append_right(item).to_list() == [*r, item]
+
+    def test_append_left(self):
+        r = range(5)
+        item = -10
+        assert SyncIter(r).append_left(item).to_list() == [item, *r]
+
+    @pytest.mark.parametrize(
+        'position',
+        (
+            0,
+            3,
+            100,
+        ),
+    )
+    def test_append_at(self, position: int):
+        r = range(5)
+        item = -10
+        l = list(r)
+        l.insert(position, item)
+        assert SyncIter(r).append_at(position, item).to_list() == l
 
 
 def test_sync_iter():

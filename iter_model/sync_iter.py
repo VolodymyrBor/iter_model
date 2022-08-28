@@ -1,11 +1,19 @@
+import functools
 import itertools
+import operator
 from functools import wraps
 from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
 T = TypeVar('T')
 R = TypeVar('R')
 P = ParamSpec('P')
+DefaultT = TypeVar('DefaultT')
+
+KeyFunc: TypeAlias = Callable[[T], R]
+BinaryFunc: TypeAlias = Callable[[T, T], R]
 ConditionFunc: TypeAlias = Callable[[T], bool]
+
+_EMPTY = object()
 
 
 def sync_iter(func: Callable[P, Iterable[T]]) -> Callable[P, 'SyncIter[T]']:
@@ -122,11 +130,11 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.chain(self, *iterables))
 
     def all(self) -> bool:
-        """Checks whether all element of this iterable satisfies"""
+        """Checks whether all elements of this iterable are true"""
         return all(self)
 
     def any(self) -> bool:
-        """Checks whether any element of this iterable satisfies"""
+        """Checks whether any element of this iterable is true"""
         return any(self)
 
     def first(self) -> T:
@@ -171,3 +179,100 @@ class SyncIter(Generic[T]):
             first = False
             previous_item = current_item
         yield previous_item, first, True
+
+    def reduce(self, func: BinaryFunc, initial: T = _EMPTY) -> R | DefaultT:
+        """Apply a function of two arguments cumulatively to the items of an iterable,
+         from left to right, to reduce the iterable to a single value.
+
+        :param func: func[accumulated value, next item]
+        :param initial: initial value of iterable. Serves like default value if iterable is empty.
+        :return: reduced value
+        :raise ValueError: if initial is not provided and iterable is empty
+        """
+        if initial is _EMPTY:
+            try:
+                return functools.reduce(func, self)
+            except TypeError:
+                raise ValueError('Iterator is empty')
+        else:
+            return functools.reduce(func, self, initial)
+
+    def max(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+        """Return the biggest item.
+
+        :param key: the result of the function will be used to compare the elements.
+        :param default: default value in case iterable is empty
+        :return: the biggest item
+        :raise ValueError: when iterable is empty and default value is not provided
+        """
+        if default is _EMPTY:
+            return max(self, key=key)
+        else:
+            return max(self, key=key, default=default)
+
+    def min(self, key: KeyFunc | None = None, default: DefaultT = _EMPTY) -> T | DefaultT:
+        """Return the smallest item.
+
+        :param key: the result of the function will be used to compare the elements.
+        :param default: default value in case iterable is empty
+        :return: the smallest item
+        :raise ValueError: when iterable is empty and default value is not provided
+        """
+        if default is _EMPTY:
+            return min(self, key=key)
+        else:
+            return min(self, key=key, default=default)
+
+    def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[R]':
+        """Return series of accumulated sums (by default).
+
+        :param func: func[accumulated value, next value], by default operator.add
+        :param initial: initial value of series
+        """
+        return SyncIter(itertools.accumulate(self, func=func, initial=initial))
+
+    @sync_iter
+    def append_left(self, item: T) -> 'SyncIter[T]':
+        """Append an item to left of the iterable (start)"""
+        yield item
+        yield from self
+
+    @sync_iter
+    def append_right(self, item: T) -> 'SyncIter[T]':
+        """Append an item to right of the iterable (end)"""
+        yield from self
+        yield item
+
+    @sync_iter
+    def append_at(self, index: int, item: T) -> 'SyncIter[T]':
+        """Append at the position in to the iterable"""
+        i = 0
+        for i, item_ in self.enumerate():
+            if i == index:
+                yield item
+            yield item_
+        if index > i:
+            yield item
+
+    def zip(self, *iterables: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[T, ...]]':
+        """The zip object yields n-length tuples, where n is the number of iterables
+        passed as positional arguments to zip().  The i-th element in every tuple
+        comes from the i-th iterable argument to zip().  This continues until the
+        shortest argument is exhausted.
+
+        :raise ValueError: when strict is true and one of the arguments is exhausted before the others
+        """
+        return SyncIter(zip(self, *iterables, strict=strict))
+
+    def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> 'SyncIter[tuple[T | R, ...]]':
+        """The zip object yields n-length tuples, where n is the number of iterables
+        passed as positional arguments to zip().  The i-th element in every tuple
+        comes from the i-th iterable argument to zip().  This continues until the
+        longest argument is exhausted.
+
+        :param fillvalue: when the shorter iterables are exhausted, the fillvalue is substituted in their place
+        """
+        return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
+
+    def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+        return SyncIter(itertools.islice(self, start, stop, step))
