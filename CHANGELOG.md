@@ -3,7 +3,7 @@
    * `reduce()`
    * `max()`
    * `min()`
-   * `accumalate()`
+   * `accumulate()`
    * `append_left()`
    * `append_right()`
    * `append_at()`
