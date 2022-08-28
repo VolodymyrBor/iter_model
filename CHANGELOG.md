@@ -1,9 +1,25 @@
+### [1.1.0] (2022-08-28)
+ * ✨ Added new methods:
+   * `reduce()`
+   * `max()`
+   * `min()`
+   * `accumalate()`
+   * `append_left()`
+   * `append_right()`
+   * `append_at()`
+   * `zip()`
+   * `zip_longest()`
+   * `slice()`
+ * 📑 Updated some doc-strings
+
+---
+
 ### [1.0.0] (2022-07-04)
  * ✨ Added new methods:
    * `next()`
    * `mark_first()`
    * `mark_last()`
-   * `mark_first()`
+   * `mark_first_last()`
  * ⚠️ Now all methods will raise StopIteration / AsyncStopIteration exceptions.
  * ⚠️ Added `__slots__` to classes
 
@@ -49,3 +65,4 @@
 [0.1.3]: https://github.com/VolodymyrBor/iter_model/pull/4
 [0.2.0]: https://github.com/VolodymyrBor/iter_model/pull/7
 [1.0.0]: https://github.com/VolodymyrBor/iter_model/pull/8
+[1.1.0]: https://github.com/VolodymyrBor/iter_model/pull/10
