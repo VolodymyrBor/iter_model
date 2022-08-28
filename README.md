@@ -119,3 +119,17 @@ asyncio.run(main())
 - ```chain()```
 - ```all()```
 - ```any()```
+- ```first()```
+- ```mark_first()```
+- ```mark_last()```
+- ```mark_first_last()```
+- ```reduce()```
+- ```max()```
+- ```min()```
+- ```accumulate()```
+- ```append_left()```
+- ```append_right()```
+- ```append_at()```
+- ```zip()```
+- ```zip_longest()```
+- ```slice()```
