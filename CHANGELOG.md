@@ -1,3 +1,7 @@
+### [1.1.1] (2022-08-29)
+ * 🛫 Set up full CI&CD flow
+---
+
 ### [1.1.0] (2022-08-28)
  * ✨ Added new methods:
    * `reduce()`
@@ -67,3 +71,4 @@
 [0.2.0]: https://github.com/VolodymyrBor/iter_model/pull/7
 [1.0.0]: https://github.com/VolodymyrBor/iter_model/pull/8
 [1.1.0]: https://github.com/VolodymyrBor/iter_model/pull/10
+[1.1.1]: https://github.com/VolodymyrBor/iter_model/pull/12
