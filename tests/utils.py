@@ -1,5 +1,4 @@
-from functools import wraps
-from typing import Iterable, AsyncIterable, TypeVar, ParamSpec, Callable, Awaitable
+from typing import Iterable, AsyncIterable, TypeVar, ParamSpec
 
 T = TypeVar('T')
 R = TypeVar('R')

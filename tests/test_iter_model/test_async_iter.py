@@ -279,7 +279,9 @@ class TestAsyncIter:
     async def test_zip(self, iterables: Iterable[Iterable]):
         r = range(3)
         it = AsyncIter.from_sync(r)
-        assert await it.zip(*map(AsyncIter.from_sync, iterables)).to_list() == list(map(list, zip(r, *iterables)))
+        assert await it.zip(
+            *map(AsyncIter.from_sync, iterables),  # type: ignore
+        ).to_list() == list(map(list, zip(r, *iterables)))  # noqa: W291
 
     async def test_zip_strict(self):
         with pytest.raises(ValueError):
@@ -297,7 +299,7 @@ class TestAsyncIter:
         r = range(3)
         it = AsyncIter.from_sync(r)
         assert await it.zip_longest(
-            *map(AsyncIter.from_sync, iterables),
+            *map(AsyncIter.from_sync, iterables),  # type: ignore
             fillvalue=fillvalue,
         ).to_list() == list(map(list, itertools.zip_longest(r, *iterables, fillvalue=fillvalue)))
 
@@ -338,9 +340,9 @@ class TestAsyncIter:
     async def test_append_at(self, position: int):
         r = range(5)
         item = -10
-        l = list(r)
-        l.insert(position, item)
-        assert await AsyncIter.from_sync(r).append_at(position, item).to_list() == l
+        list_ = list(r)
+        list_.insert(position, item)
+        assert await AsyncIter.from_sync(r).append_at(position, item).to_list() == list_
 
 
 async def test_async_iter():

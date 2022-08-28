@@ -327,9 +327,9 @@ class TestSyncIter:
     def test_append_at(self, position: int):
         r = range(5)
         item = -10
-        l = list(r)
-        l.insert(position, item)
-        assert SyncIter(r).append_at(position, item).to_list() == l
+        list_ = list(r)
+        list_.insert(position, item)
+        assert SyncIter(r).append_at(position, item).to_list() == list_
 
 
 def test_sync_iter():
