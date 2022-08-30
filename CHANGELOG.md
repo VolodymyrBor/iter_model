@@ -1,3 +1,10 @@
+### [1.2.0] (2022-08-30)
+  * ✨ New features:
+    * 💊 Added stubs: now the type hints should get even better. 
+  * ⚙️ Internal changes:
+    * 📄 Updated release template 
+---
+
 ### [1.1.1] (2022-08-29)
  * 🛫 Set up full CI&CD flow
 ---
@@ -72,3 +79,4 @@
 [1.0.0]: https://github.com/VolodymyrBor/iter_model/pull/8
 [1.1.0]: https://github.com/VolodymyrBor/iter_model/pull/10
 [1.1.1]: https://github.com/VolodymyrBor/iter_model/pull/12
+[1.2.0]: https://github.com/VolodymyrBor/iter_model/pull/14
