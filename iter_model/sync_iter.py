@@ -56,8 +56,8 @@ class SyncIter(Generic[T]):
         """Returns a tuple containing a count (from start which defaults to 0)
         and the values obtained from iterating over self.
 
-        :param start: start of index
-        :return: interator of tuple[index, item]
+        :param start: start of count
+        :return: interator of tuple[count, item]
         """
         return SyncIter(enumerate(self, start=start))
 
@@ -91,7 +91,7 @@ class SyncIter(Generic[T]):
     def first_where(self, func: ConditionFunc) -> T:
         """Find first item for which the conditional is satisfied
 
-        :raise StopIteration: the item not found
+        :raise ValueError: the item was not found
         """
         for item in self:
             if func(item):
@@ -99,7 +99,7 @@ class SyncIter(Generic[T]):
         raise ValueError('Item not found')
 
     def where(self, func: ConditionFunc) -> 'SyncIter[T]':
-        """Filter item by condition"""
+        """Filter items by condition"""
         return SyncIter(filter(func, self))
 
     def take_while(self, func: ConditionFunc) -> 'SyncIter[T]':
@@ -107,14 +107,14 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.takewhile(func, self))
 
     def next(self) -> T:
-        """Returns the first item"""
+        """Returns the next item"""
         try:
             return next(self)
         except StopIteration:
             raise StopIteration('Iterable is empty')
 
     def last(self) -> T:
-        """Returns the last item"""
+        """Return the last item"""
         last_item = initial = object()
         for item in self:
             last_item = item
@@ -137,7 +137,7 @@ class SyncIter(Generic[T]):
         return any(self)
 
     def first(self) -> T:
-        """Returns first item"""
+        """Return first item. The same as next()"""
         return self.next()
 
     @sync_iter
@@ -184,7 +184,7 @@ class SyncIter(Generic[T]):
         func: BinaryFunc,
         initial: T = _EMPTY,  # type: ignore
     ) -> T | DefaultT:
-        """Apply a function of two arguments cumulatively to the items of an iterable,
+        """Apply the func of two arguments cumulatively to the items of an iterable,
          from left to right, to reduce the iterable to a single value.
 
         :param func: func[accumulated value, next item]
