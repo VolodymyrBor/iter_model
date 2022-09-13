@@ -1,4 +1,9 @@
-# Iter Model
+<p align="center">
+    <a href="https://pypi.org/project/iter_model">
+        <img src="docs/assets/images/iter_model-logos_transparent.png" alt="IterModel" width="300">
+    </a>
+</p>
+
 
 <a href="https://pypi.org/project/iter_model" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/iter_model.svg?color=%2334D058" alt="Supported Python versions">
@@ -15,121 +20,39 @@
 [![Supported Versions](https://img.shields.io/badge/async-✅-grey)](https://shields.io/)
 [![Supported Versions](https://img.shields.io/badge/mypy-✅-grey)](https://shields.io/)
 
-## Description
+---
 
-**Iter Model** uses a method approach instead of individual functions to work with iterable objects.
+**iter_model** - provides a convenient API for interacting with iterable objects ([Iterable]).
+iter_model uses a methods approach instead of individual functions.
 
-### Native approach
+iter_model also provides **async** analog of all methods. 
+This is useful when interacting with asynchronous iterable objects ([AsyncIterable]), 
+because python does not have ready functions for these cases.
 
-```python
-result = list(map(
-    lambda x: x ** 2,
-    filter(lambda x: x % 2 == 0, range(10)),
-))
-```
+Therefore, **iter_model** provides **SyncIter** class for [Iterable],
+and **AsyncIter** for [AsyncIterable].
 
-### Iter Model approach
+---
+
+## Example
 
 ```python
 from iter_model import SyncIter
 
+it = SyncIter(range(10))  # SyncIter for sync iterables
 result = (
-    SyncIter(range(10))
-        .where(lambda x: x % 2 == 0)
-        .map(lambda x: x ** 2)
-        .to_list()
+    it.where(lambda x: x % 2 == 0)  # filter only odd values
+    .take(3)  # take first 3 value
+    .map(lambda x: x ** 2)  # square all values
 )
-
+print(result.to_list())
 ```
 
-### Generators
+## Links
 
-You can decorate your generator function and get SyncIter as a result
+**Source code**: [github.com/VolodymyrBor/iter_model](https://github.com/VolodymyrBor/iter_model)
 
-```python
-from iter_model import sync_iter
+**Documentation**: [iter_model](http://127.0.0.1:8000/)
 
-
-@sync_iter
-def some_generator():
-    for item in range(10):
-        yield item
-
-
-result = some_generator().take_while(lambda x: x < 5).to_list()
-```
-
-### Async support
-
-Iter Model also support async iterable and async function as condition.
-
-
-```python
-import asyncio
-
-from iter_model import async_iter
-
-
-@async_iter
-async def some_generator():
-    for item in range(10):
-        yield item
-
-        
-async def condition_a(x):
-    """Some async condition"""
-    return x % 2 == 0 
-
-
-def condition_b(x):
-    """Some sync condition"""
-    return x > 5 
-
-
-async def main():
-    result = await (
-        some_generator()
-            .where(condition_a)
-            .take_while(condition_b)
-            .to_list()
-    )
-    print(result)
-    
-
-
-asyncio.run(main())
-```
-
-### SyncIter/AsyncIter provide the following methods
-
-- ```to_list()```
-- ```to_tuple()```
-- ```to_set()```
-- ```enumerate()```
-- ```take()```
-- ```map()```
-- ```skip()```
-- ```skip_while()```
-- ```count()```
-- ```first_where()```
-- ```where()```
-- ```take_while()```
-- ```first()```
-- ```last()```
-- ```chain()```
-- ```all()```
-- ```any()```
-- ```first()```
-- ```mark_first()```
-- ```mark_last()```
-- ```mark_first_last()```
-- ```reduce()```
-- ```max()```
-- ```min()```
-- ```accumulate()```
-- ```append_left()```
-- ```append_right()```
-- ```append_at()```
-- ```zip()```
-- ```zip_longest()```
-- ```slice()```
+[Iterable]: https://docs.python.org/3/library/typing.html#typing.Iterable
+[AsyncIterable]: https://docs.python.org/3/library/typing.html#typing.AsyncIterable
