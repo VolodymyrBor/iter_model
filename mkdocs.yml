@@ -1,0 +1,21 @@
+site_name: iter_model
+repo_url: https://github.com/VolodymyrBor/iter_model
+theme:
+  name: material
+  favicon: assets/images/iter_model_logo_white_icon.png
+  logo: assets/images/iter_model_logo_white_icon.png
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+nav:
+  - Home: index.md
+  - Use with generator: generators_usage.md
+  - API Documentation:
+      - SyncIter: sync_iter.md
+      - AsyncIter: async_iter.md
