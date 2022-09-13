@@ -1,47 +1,56 @@
-# SyncIter
+# AsyncIter
 
-## SyncIter
+## AsyncIter
 
 ```python
-class SyncIter
+class AsyncIter
 ```
 
-Class for Iterable objects.
+Class for AsyncIterable objects.
 
-### SyncIter.to_list
+### AsyncIter.from_sync
 
 ```python
-def to_list(self) -> list[T]:
+def from_sync(cls, it: Iterable[T]) -> AsyncIter[T]:
+```
+
+!!! quote ""
+    Create AsyncIter from Iterable object (sync)
+
+### AsyncIter.to_list
+
+```python
+async def to_list(self) -> list[T]:
 ```
 
 !!! quote ""
     Convert to list
 
 
-### SyncIter.to_tuple
+### AsyncIter.to_tuple
 
 ```python
- def to_tuple(self) -> tuple[T, ...]:
+async def to_tuple(self) -> tuple[T, ...]:
 ```
 
 !!! quote ""
     Convert to tuple
     
 
-### SyncIter.to_set
+### AsyncIter.to_set
 
 ```python
- def to_set(self) -> set[T]:
+async def to_set(self) -> set[T]:
 ```
 
 !!! quote ""
     Convert to set
     
 
-### SyncIter.enumerate
+### AsyncIter.enumerate
 
 ```python
-def enumerate(self, start: int = 0) -> SyncIter[tuple[int, T]]:
+def enumerate(self, start: int = 0) -> AsyncIter[tuple[int, T]]:
 ```
 
 !!! quote ""
@@ -54,13 +63,13 @@ def enumerate(self, start: int = 0) -> SyncIter[tuple[int, T]]:
 
     **Returns**:
     
-    SyncIter of tuple[count, item]
+    AsyncIter of tuple[count, item]
 
 
-### SyncIter.take
+### AsyncIter.take
 
 ```python
-def take(self, count: int) -> SyncIter[T]:
+def take(self, count: int) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -71,10 +80,10 @@ def take(self, count: int) -> SyncIter[T]:
     * `count` - count of item to take
 
 
-### SyncIter.map
+### AsyncIter.map
 
 ```python
-def map(self, func: Callable[[T], R]) -> SyncIter[R]:
+def map(self, func: Callable[[T], R]) -> AsyncIter[R]:
 ```
 
 !!! quote ""
@@ -86,10 +95,10 @@ def map(self, func: Callable[[T], R]) -> SyncIter[R]:
     * `func` - apply to each item
 
 
-### SyncIter.skip
+### AsyncIter.skip
 
 ```python
-def skip(self, count: int) -> SyncIter[T]:
+def skip(self, count: int) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -100,10 +109,10 @@ def skip(self, count: int) -> SyncIter[T]:
     * `count` - count of items to skip
 
 
-### SyncIter.skip_while
+### AsyncIter.skip_while
 
 ```python
-skip_while(self, func: ConditionFunc) -> SyncIter[T]:
+def skip_while(self, func: ConditionFunc) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -114,17 +123,17 @@ skip_while(self, func: ConditionFunc) -> SyncIter[T]:
     * `func` - condition
 
 
-### SyncIter.count
+### AsyncIter.count
 
 ```python
-def count(self) -> int:
+async def count(self) -> int:
 ```
 
 !!! quote ""
     Return count of items in iterator
 
 
-### SyncIter.first_where
+### AsyncIter.first_where
 
 ```python
 def first_where(self, func: ConditionFunc) -> T:
@@ -142,10 +151,10 @@ def first_where(self, func: ConditionFunc) -> T:
     * `ValueError` - the item was not found
 
 
-### SyncIter.where
+### AsyncIter.where
 
 ```python
-def where(self, func: ConditionFunc) -> SyncIter[T]:
+def where(self, func: ConditionFunc) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -156,10 +165,10 @@ def where(self, func: ConditionFunc) -> SyncIter[T]:
     * `func` - condition
 
 
-### SyncIter.take_while
+### AsyncIter.take_while
 
 ```python
-def take_while(self, func: ConditionFunc) -> SyncIter[T]:
+def take_while(self, func: ConditionFunc) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -170,30 +179,30 @@ def take_while(self, func: ConditionFunc) -> SyncIter[T]:
     * `func` - condition
 
 
-### SyncIter.next
+### AsyncIter.next
 
 ```python
-def next(self) -> T:
+async def next(self) -> T:
 ```
 
 !!! quote ""
     Returns the next item
 
 
-### SyncIter.last
+### AsyncIter.last
 
 ```python
- def last(self) -> T:
+ async def last(self) -> T:
 ```
 
 !!! quote ""
     Return the last item
 
 
-### SyncIter.chain
+### AsyncIter.chain
 
 ```python
-def chain(self, *iterables: Iterable[T]) -> SyncIter[T]:
+def chain(self, *iterables: AsyncIterable[T]) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -204,27 +213,27 @@ def chain(self, *iterables: Iterable[T]) -> SyncIter[T]:
     * `iterables` - iterables
 
 
-### SyncIter.all
+### AsyncIter.all
 
 ```python
-def all(self) -> bool:
+async def all(self) -> bool:
 ```
 
 !!! quote ""
     Checks whether all elements of this iterable are true
 
 
-### SyncIter.any
+### AsyncIter.any
 
 ```python
-def any(self) -> bool:
+async def any(self) -> bool:
 ```
 
 !!! quote ""
     Checks whether any element of this iterable is true
 
 
-### SyncIter.first
+### AsyncIter.first
 
 ```python
 def first(self) -> T:
@@ -234,10 +243,10 @@ def first(self) -> T:
     Return first item. The same as `next()`
 
 
-### SyncIter.mark_first
+### AsyncIter.mark_first
 
 ```python
-def mark_first(self) -> SyncIter[tuple[T, bool]]:
+def mark_first(self) -> AsyncIter[tuple[T, bool]]:
 ```
 
 !!! quote ""
@@ -248,10 +257,10 @@ def mark_first(self) -> SyncIter[tuple[T, bool]]:
     tuple[item, is_first]
 
 
-### SyncIter.mark_last
+### AsyncIter.mark_last
 
 ```python
-def mark_last(self) -> SyncIter[tuple[T, bool]]:
+def mark_last(self) -> AsyncIter[tuple[T, bool]]:
 ```
 
 !!! quote ""
@@ -262,10 +271,10 @@ def mark_last(self) -> SyncIter[tuple[T, bool]]:
     tuple[item, is_last]
 
 
-### SyncIter.mark_first_last
+### AsyncIter.mark_first_last
 
 ```python
-def mark_first_last(self) -> SyncIter[tuple[T, bool, bool]]:
+def mark_first_last(self) -> AsyncIter[tuple[T, bool, bool]]:
 ```
 
 !!! quote ""
@@ -276,7 +285,7 @@ def mark_first_last(self) -> SyncIter[tuple[T, bool, bool]]:
     `tuple[item, is_first, is_last]`
 
 
-### SyncIter.reduce
+### AsyncIter.reduce
 
 ```python
 def reduce(
@@ -300,10 +309,10 @@ def reduce(
     * `ValueError` - if initial is not provided and iterable is empty
 
 
-### SyncIter.max
+### AsyncIter.max
 
 ```python
-def max(
+async def max(
     self,
     key: KeyFunc | None = None,
     default: DefaultT = _EMPTY,
@@ -323,10 +332,10 @@ def max(
     * `ValueError` - when iterable is empty and default value is not provided
 
 
-### SyncIter.min
+### AsyncIter.min
 
 ```python
-def min(
+async def min(
     self,
     key: KeyFunc | None = None,
     default: DefaultT = _EMPTY,
@@ -346,10 +355,10 @@ def min(
     * `ValueError` - when iterable is empty and default value is not provided
 
 
-### SyncIter.accumulate
+### AsyncIter.accumulate
 
 ```python
-def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> SyncIter[T]
+def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> AsyncIter[T]
 ```
 
 !!! quote ""
@@ -361,10 +370,10 @@ def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) 
     * `default` - initial value of series
 
 
-### SyncIter.append_left
+### AsyncIter.append_left
 
 ```python
-def append_left(self, item: T) -> SyncIter[T]:
+def append_left(self, item: T) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -375,10 +384,10 @@ def append_left(self, item: T) -> SyncIter[T]:
     * `item` - item
 
 
-### SyncIter.append_right
+### AsyncIter.append_right
 
 ```python
-def append_right(self, item: T) -> SyncIter[T]:
+def append_right(self, item: T) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -389,10 +398,10 @@ def append_right(self, item: T) -> SyncIter[T]:
     * `item` - item
 
 
-### SyncIter.append_at
+### AsyncIter.append_at
 
 ```python
-def append_at(self, index: int, item: T) -> SyncIter[T]:
+def append_at(self, index: int, item: T) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -404,10 +413,10 @@ def append_at(self, index: int, item: T) -> SyncIter[T]:
     * `item` - item
 
 
-### SyncIter.zip
+### AsyncIter.zip
 
 ```python
-def zip(self, *iterables: Iterable[T], strict: bool = False) -> SyncIter[tuple[T, ...]]:
+def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> AsyncIter[tuple[T, ...]]:
 ```
 
 !!! quote ""
@@ -426,10 +435,10 @@ def zip(self, *iterables: Iterable[T], strict: bool = False) -> SyncIter[tuple[T
     * `ValueError`: when strict is true and one of the arguments is exhausted before the others
 
 
-### SyncIter.zip_longest
+### AsyncIter.zip_longest
 
 ```python
-def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> SyncIter[tuple[T | R, ...]]:
+def zip_longest(self, *iterables: AsyncIterable[T], fillvalue: R = None) -> AsyncIter[tuple[T | R, ...]]:
 ```
 
 !!! quote ""
@@ -443,10 +452,10 @@ def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> SyncIter[
     * `fillvalue` - when the shorter iterables are exhausted, the fillvalue is substituted in their place
 
 
-### SyncIter.slice
+### AsyncIter.slice
 
 ```python
-def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncIter[T]:
+def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIter[T]:
 ```
 
 !!! quote ""
@@ -457,4 +466,3 @@ def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncI
     * `start` - start of slice
     * `stop` - stop of slice
     * `step` - step of slice
-
