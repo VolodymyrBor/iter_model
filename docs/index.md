@@ -1,9 +1,10 @@
-<p align="center">
-    <a href="https://pypi.org/project/iter_model">
-        <img src="docs/assets/images/iter_model-logos_transparent.png" alt="IterModel" width="300">
-    </a>
-</p>
+# Home
 
+## Overview
+
+<figure markdown>
+  ![iter_model](assets/images/iter_model-logos_transparent.png){ width="300" align }
+</figure>
 
 <a href="https://pypi.org/project/iter_model" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/iter_model.svg?color=%2334D058" alt="Supported Python versions">
@@ -33,6 +34,20 @@ Therefore, **iter_model** provides **SyncIter** class for [Iterable],
 and **AsyncIter** for [AsyncIterable].
 
 ---
+
+## Installation
+
+=== "PIP"
+
+    ``` shell
+    pip install iter_model
+    ```
+
+=== "Poetry"
+
+    ``` shell
+    poetry add iter_model
+    ```
 
 ## Example
 
