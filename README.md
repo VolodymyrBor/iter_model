@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://pypi.org/project/iter_model">
-        <img src="docs/assets/images/iter_model-logos_transparent.png" alt="IterModel" width="300">
+        <img src="docs/static/images/iter_model-logos_transparent.png" alt="IterModel" width="300">
     </a>
 </p>
 
@@ -52,7 +52,7 @@ print(result.to_list())
 
 **Source code**: [github.com/VolodymyrBor/iter_model](https://github.com/VolodymyrBor/iter_model)
 
-**Documentation**: [iter_model](http://127.0.0.1:8000/)
+**Documentation**: [iter_model](https://volodymyrbor.github.io/iter_model/)
 
 [Iterable]: https://docs.python.org/3/library/typing.html#typing.Iterable
 [AsyncIterable]: https://docs.python.org/3/library/typing.html#typing.AsyncIterable
