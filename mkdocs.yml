@@ -2,8 +2,8 @@ site_name: iter_model
 repo_url: https://github.com/VolodymyrBor/iter_model
 theme:
   name: material
-  favicon: assets/images/iter_model_logo_white_icon.png
-  logo: assets/images/iter_model_logo_white_icon.png
+  favicon: static/images/iter_model_logo_white_icon.png
+  logo: static/images/iter_model_logo_white_icon.png
 markdown_extensions:
   - admonition
   - pymdownx.details
