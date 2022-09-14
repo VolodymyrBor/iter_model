@@ -8,7 +8,7 @@ DefaultT = TypeVar('DefaultT')
 KeyFunc: TypeAlias = Callable[[T], R | Awaitable[R]]
 BinaryFunc: TypeAlias = Callable[[T, T], R | Awaitable[R]]
 ConditionFunc: TypeAlias = Callable[[T], bool | Awaitable[bool]]
-
+_EMPTY = object()
 
 
 class SyncIter(Generic[T]):
@@ -38,7 +38,7 @@ class SyncIter(Generic[T]):
 
     def count(self) -> int: ...
 
-    def first_where(self, func: ConditionFunc) -> T: ...
+    def first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT: ...
 
     def where(self, func: ConditionFunc) -> SyncIter[T]: ...
 
