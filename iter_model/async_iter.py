@@ -53,7 +53,7 @@ class AsyncIter(Generic[T]):
 
     @classmethod
     @async_iter
-    async def from_sync(cls, it: Iterable[T]) -> 'AsyncIter[T]':  # type: ignore
+    async def from_sync(cls, it: Iterable[T]) -> 'AsyncIter[T]':
         """Create from sync iterable"""
         for item in it:
             yield item
@@ -71,7 +71,7 @@ class AsyncIter(Generic[T]):
         return set([item async for item in self])
 
     @async_iter
-    async def enumerate(self, start: int = 0) -> 'AsyncIter[tuple[int, T]]':  # type: ignore
+    async def enumerate(self, start: int = 0) -> 'AsyncIter[tuple[int, T]]':
         """Returns a tuple containing a count (from start which defaults to 0)
         and the values obtained from iterating over self.
 
@@ -84,7 +84,7 @@ class AsyncIter(Generic[T]):
             index += 1
 
     @async_iter
-    async def take(self, limit: int) -> 'AsyncIter[T]':  # type: ignore
+    async def take(self, limit: int) -> 'AsyncIter[T]':
         """Take 'count' items from iterator"""
         async for index, item in self.enumerate():
             if index >= limit:
@@ -92,7 +92,7 @@ class AsyncIter(Generic[T]):
             yield item
 
     @async_iter
-    async def map(self, func: Callable[[T], R | Awaitable[R]]) -> 'AsyncIter[R]':  # type: ignore
+    async def map(self, func: Callable[[T], R | Awaitable[R]]) -> 'AsyncIter[R]':
         """Return an iterator that applies function to every item of iterable,
         yielding the results"""
         func = asyncify(func)
@@ -100,14 +100,14 @@ class AsyncIter(Generic[T]):
             yield await func(item)
 
     @async_iter
-    async def skip(self, count: int) -> 'AsyncIter[T]':  # type: ignore
+    async def skip(self, count: int) -> 'AsyncIter[T]':
         """Skip 'count' items from iterator"""
         async for index, item in self.enumerate():
             if index >= count:
                 yield item
 
     @async_iter
-    async def skip_while(self, func: ConditionFunc) -> 'AsyncIter[T]':  # type: ignore
+    async def skip_while(self, func: ConditionFunc) -> 'AsyncIter[T]':
         """Skips leading elements while conditional is satisfied"""
         func = asyncify(func)
         async for item in self:  # pragma: no cover
@@ -133,7 +133,7 @@ class AsyncIter(Generic[T]):
         raise ValueError('Item not found')
 
     @async_iter
-    async def where(self, func: ConditionFunc) -> 'AsyncIter[T]':  # type: ignore
+    async def where(self, func: ConditionFunc) -> 'AsyncIter[T]':
         """Filter item by condition"""
         func = asyncify(func)
         async for item in self:
@@ -141,7 +141,7 @@ class AsyncIter(Generic[T]):
                 yield item
 
     @async_iter
-    async def take_while(self, func: ConditionFunc) -> 'AsyncIter[T]':  # type: ignore
+    async def take_while(self, func: ConditionFunc) -> 'AsyncIter[T]':
         """Take items while the conditional is satisfied"""
         func = asyncify(func)
         async for item in self:
@@ -153,7 +153,7 @@ class AsyncIter(Generic[T]):
     async def next(self) -> T:
         """Returns the first item"""
         try:
-            return await anext(self)  # type: ignore
+            return await anext(self)
         except StopAsyncIteration:
             raise StopAsyncIteration('Iterable is empty')
 
@@ -166,10 +166,10 @@ class AsyncIter(Generic[T]):
         if last_item is initial:
             raise StopAsyncIteration('Iterable is empty')
 
-        return last_item  # type: ignore
+        return last_item
 
     @async_iter
-    async def chain(self, *iterables: AsyncIterable[T]) -> 'AsyncIter[T]':  # type: ignore
+    async def chain(self, *iterables: AsyncIterable[T]) -> 'AsyncIter[T]':
         """Chain with other iterables"""
         async for item in self:
             yield item
@@ -197,7 +197,7 @@ class AsyncIter(Generic[T]):
         return await self.next()
 
     @async_iter
-    async def mark_first(self) -> 'AsyncIter[tuple[T, bool]]':  # type: ignore
+    async def mark_first(self) -> 'AsyncIter[tuple[T, bool]]':
         """Mark first item. Yields: tuple[item, is_first]"""
         try:
             first = await self.next()
@@ -209,7 +209,7 @@ class AsyncIter(Generic[T]):
             yield item, False
 
     @async_iter
-    async def mark_last(self) -> 'AsyncIter[tuple[T, bool]]':  # type: ignore
+    async def mark_last(self) -> 'AsyncIter[tuple[T, bool]]':
         """Mark last item. Yields: tuple[item, is_last]"""
         try:
             previous_item = await self.next()
@@ -222,7 +222,7 @@ class AsyncIter(Generic[T]):
         yield previous_item, True
 
     @async_iter
-    async def mark_first_last(self) -> 'AsyncIter[tuple[T, bool, bool]]':  # type: ignore
+    async def mark_first_last(self) -> 'AsyncIter[tuple[T, bool, bool]]':
         """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
         try:
             previous_item = await self.next()
@@ -239,7 +239,7 @@ class AsyncIter(Generic[T]):
     async def reduce(
         self,
         func: BinaryFunc,
-        initial: T = _EMPTY,  # type: ignore
+        initial: T = _EMPTY,
     ) -> T | R:
         """Apply a function of two arguments cumulatively to the items of an iterable,
          from left to right, to reduce the iterable to a single value.
@@ -263,7 +263,7 @@ class AsyncIter(Generic[T]):
     async def max(
         self,
         key: KeyFunc | None = None,
-        default: DefaultT = _EMPTY,  # type: ignore
+        default: DefaultT = _EMPTY,
     ) -> T | DefaultT:
         """Return the biggest item.
 
@@ -291,7 +291,7 @@ class AsyncIter(Generic[T]):
     async def min(
         self,
         key: KeyFunc | None = None,
-        default: DefaultT = _EMPTY,  # type: ignore
+        default: DefaultT = _EMPTY,
     ) -> T | DefaultT:
         """Return the smallest item.
 
@@ -317,7 +317,7 @@ class AsyncIter(Generic[T]):
         return max_item
 
     @async_iter
-    async def accumulate(  # type: ignore
+    async def accumulate(
         self,
         func: BinaryFunc = operator.add,
         initial: T | None = None,
@@ -341,21 +341,21 @@ class AsyncIter(Generic[T]):
             yield total
 
     @async_iter
-    async def append_left(self, item: T) -> 'AsyncIter[T]':  # type: ignore
+    async def append_left(self, item: T) -> 'AsyncIter[T]':
         """Append an item to left of the iterable (start)"""
         yield item
         async for item_ in self:
             yield item_
 
     @async_iter
-    async def append_right(self, item: T) -> 'AsyncIter[T]':  # type: ignore
+    async def append_right(self, item: T) -> 'AsyncIter[T]':
         """Append an item to right of the iterable (end)"""
         async for item_ in self:
             yield item_
         yield item
 
     @async_iter
-    async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':  # type: ignore
+    async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':
         """Append at the position in to the iterable"""
         i = 0
         async for i, item_ in self.enumerate():
@@ -366,7 +366,7 @@ class AsyncIter(Generic[T]):
             yield item
 
     @async_iter
-    async def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':  # type: ignore
+    async def zip(self, *iterables: AsyncIterable[T], strict: bool = False) -> 'AsyncIter[list[T]]':
         """The zip object yields n-length tuples, where n is the number of iterables
         passed as positional arguments to zip().  The i-th element in every tuple
         comes from the i-th iterable argument to zip().  This continues until the
@@ -379,7 +379,7 @@ class AsyncIter(Generic[T]):
             batch = []
             for it in iterables:
                 try:
-                    batch.append(await anext(it))  # type: ignore
+                    batch.append(await anext(it))
                 except StopAsyncIteration:
                     if not strict:
                         return
@@ -388,7 +388,7 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def zip_longest(  # type: ignore
+    async def zip_longest(
         self,
         *iterables: AsyncIterable[T],
         fillvalue: R = None,
@@ -406,7 +406,7 @@ class AsyncIter(Generic[T]):
             batch_has_any_value = False
             for it in iterables:
                 try:
-                    batch.append(await anext(it))  # type: ignore
+                    batch.append(await anext(it))
                     batch_has_any_value = True
                 except StopAsyncIteration:
                     batch.append(fillvalue)
@@ -415,7 +415,7 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':  # type: ignore
+    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
         it = self.skip(start)
 
         if stop is not None:

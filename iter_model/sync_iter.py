@@ -71,7 +71,7 @@ class SyncIter(Generic[T]):
         return SyncIter(map(func, self))
 
     @sync_iter
-    def skip(self, count: int) -> 'SyncIter[T]':  # type: ignore
+    def skip(self, count: int) -> 'SyncIter[T]':
         """Skip 'count' items from iterator"""
         for index, item in self.enumerate():
             if index >= count:
@@ -122,7 +122,7 @@ class SyncIter(Generic[T]):
         if last_item is initial:
             raise StopIteration('Iterable is empty')
 
-        return last_item  # type: ignore
+        return last_item
 
     def chain(self, *iterables: Iterable[T]) -> 'SyncIter[T]':
         """Chain with other iterables"""
@@ -141,7 +141,7 @@ class SyncIter(Generic[T]):
         return self.next()
 
     @sync_iter
-    def mark_first(self) -> 'SyncIter[tuple[T, bool]]':  # type: ignore
+    def mark_first(self) -> 'SyncIter[tuple[T, bool]]':
         """Mark first item. Yields: tuple[item, is_first]"""
         try:
             first = self.next()
@@ -152,7 +152,7 @@ class SyncIter(Generic[T]):
         yield from self.map(lambda item: (item, False))
 
     @sync_iter
-    def mark_last(self) -> 'SyncIter[tuple[T, bool]]':  # type: ignore
+    def mark_last(self) -> 'SyncIter[tuple[T, bool]]':
         """Mark last item. Yields: tuple[item, is_last]"""
         try:
             previous_item = self.next()
@@ -165,7 +165,7 @@ class SyncIter(Generic[T]):
         yield previous_item, True
 
     @sync_iter
-    def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':  # type: ignore
+    def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':
         """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
         try:
             previous_item = self.next()
@@ -182,7 +182,7 @@ class SyncIter(Generic[T]):
     def reduce(
         self,
         func: BinaryFunc,
-        initial: T = _EMPTY,  # type: ignore
+        initial: T = _EMPTY,
     ) -> T | DefaultT:
         """Apply the func of two arguments cumulatively to the items of an iterable,
          from left to right, to reduce the iterable to a single value.
@@ -203,7 +203,7 @@ class SyncIter(Generic[T]):
     def max(
         self,
         key: KeyFunc | None = None,
-        default: DefaultT = _EMPTY,  # type: ignore
+        default: DefaultT = _EMPTY,
     ) -> T | DefaultT:
         """Return the biggest item.
 
@@ -213,14 +213,14 @@ class SyncIter(Generic[T]):
         :raise ValueError: when iterable is empty and default value is not provided
         """
         if default is _EMPTY:
-            return max(self, key=key)  # type: ignore
+            return max(self, key=key)
         else:
-            return max(self, key=key, default=default)  # type: ignore
+            return max(self, key=key, default=default)
 
     def min(
         self,
         key: KeyFunc | None = None,
-        default: DefaultT = _EMPTY,  # type: ignore
+        default: DefaultT = _EMPTY,
     ) -> T | DefaultT:
         """Return the smallest item.
 
@@ -230,9 +230,9 @@ class SyncIter(Generic[T]):
         :raise ValueError: when iterable is empty and default value is not provided
         """
         if default is _EMPTY:
-            return min(self, key=key)  # type: ignore
+            return min(self, key=key)
         else:
-            return min(self, key=key, default=default)  # type: ignore
+            return min(self, key=key, default=default)
 
     def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[T]':
         """Return series of accumulated sums (by default).
@@ -243,19 +243,19 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.accumulate(self, func=func, initial=initial))
 
     @sync_iter
-    def append_left(self, item: T) -> 'SyncIter[T]':  # type: ignore
+    def append_left(self, item: T) -> 'SyncIter[T]':
         """Append an item to left of the iterable (start)"""
         yield item
         yield from self
 
     @sync_iter
-    def append_right(self, item: T) -> 'SyncIter[T]':  # type: ignore
+    def append_right(self, item: T) -> 'SyncIter[T]':
         """Append an item to right of the iterable (end)"""
         yield from self
         yield item
 
     @sync_iter
-    def append_at(self, index: int, item: T) -> 'SyncIter[T]':  # type: ignore
+    def append_at(self, index: int, item: T) -> 'SyncIter[T]':
         """Append at the position in to the iterable"""
         i = 0
         for i, item_ in self.enumerate():
