@@ -127,7 +127,7 @@ def count(self) -> int:
 ### SyncIter.first_where
 
 ```python
-def first_where(self, func: ConditionFunc) -> T:
+first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT:
 ```
 
 !!! quote ""
@@ -135,11 +135,12 @@ def first_where(self, func: ConditionFunc) -> T:
 
     **Parameters**:
 
-    * `func` - condition
+    * `func` - condition function
+    * `default` - default value
 
     **Raises**:
     
-    * `ValueError` - the item was not found
+    * `ValueError` - the item was not found and default was not provided
 
 
 ### SyncIter.where
