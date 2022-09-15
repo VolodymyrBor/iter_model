@@ -1,3 +1,18 @@
+### [1.3.0] (2022-09-15)
+✨ New features:
+* ✨ Added default parameter for first_where()
+
+⚙️Internal Changes:
+
+* ⬆️ updated dependencies
+* 💊 fixed mypy issue
+* 📄updated metadata in pyproject.toml
+* 📄updated docs volodymyrb
+* ✨ Removed unused type ignores
+* 💊 Improved stubs/typing
+* 📄Updated CHANGELOG.md for the previous release
+---
+
 ### [1.2.1] (2022-09-14)
   * ⚙️ Internal changes:
     * 📄Create docs using mkdocs-material
@@ -90,3 +105,4 @@
 [1.1.1]: https://github.com/VolodymyrBor/iter_model/pull/12
 [1.2.0]: https://github.com/VolodymyrBor/iter_model/pull/14
 [1.2.1]: https://github.com/VolodymyrBor/iter_model/pull/16
+[1.3.0]: https://github.com/VolodymyrBor/iter_model/pull/18
