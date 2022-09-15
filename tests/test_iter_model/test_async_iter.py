@@ -93,6 +93,10 @@ class TestAsyncIter:
         with pytest.raises(ValueError):
             await AsyncIter(to_async_iter(items)).first_where(condition)
 
+    async def test_first_where_with_default(self):
+        default = object()
+        assert await AsyncIter.from_sync([]).first_where(bool, default=default) is default
+
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
         (
