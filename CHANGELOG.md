@@ -1,3 +1,12 @@
+### [1.2.1] (2022-09-14)
+  * ⚙️ Internal changes:
+    * 📄Create docs using mkdocs-material
+    * 💚Set up CD for docs
+    * 📄Updated readme
+    * ⚙️ Migrated to new poetry installer
+---
+
+
 ### [1.2.0] (2022-08-30)
   * ✨ New features:
     * 💊 Added stubs: now the type hints should get even better. 
@@ -80,3 +89,4 @@
 [1.1.0]: https://github.com/VolodymyrBor/iter_model/pull/10
 [1.1.1]: https://github.com/VolodymyrBor/iter_model/pull/12
 [1.2.0]: https://github.com/VolodymyrBor/iter_model/pull/14
+[1.2.1]: https://github.com/VolodymyrBor/iter_model/pull/16

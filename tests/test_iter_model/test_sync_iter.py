@@ -88,6 +88,10 @@ class TestSyncIter:
         with pytest.raises(ValueError):
             SyncIter(items).first_where(condition)
 
+    def test_first_where_with_default(self):
+        default = object()
+        assert SyncIter([]).first_where(bool, default=default) is default
+
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
         (
