@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://volodymyrbor.github.io/iter_model">
-        <img src="docs/img/iter_model-logos_transparent.png" alt="IterModel" width="300">
+        <img src="https://volodymyrbor.github.io/iter_model/img/iter_model-logos_transparent.png" alt="IterModel" width="300">
     </a>
 </p>
 
