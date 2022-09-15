@@ -127,7 +127,11 @@ def count(self) -> int:
 ### SyncIter.first_where
 
 ```python
-first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT:
+def first_where(
+    self,
+    func: ConditionFunc,
+    default: DefaultT = _EMPTY,
+) -> T | DefaultT:
 ```
 
 !!! quote ""

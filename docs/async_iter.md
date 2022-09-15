@@ -136,7 +136,11 @@ async def count(self) -> int:
 ### AsyncIter.first_where
 
 ```python
-async def first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT:
+async def first_where(
+    self,
+    func: ConditionFunc,
+    default: DefaultT = _EMPTY,
+) -> T | DefaultT:
 ```
 
 !!! quote ""
