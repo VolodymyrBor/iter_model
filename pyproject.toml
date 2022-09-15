@@ -5,8 +5,10 @@ description = "iter-model uses a method approach instead of individual functions
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/VolodymyrBor/iter_model"
+homepage = "https://volodymyrbor.github.io/iter_model/"
 repository = "https://github.com/VolodymyrBor/iter_model"
+documentation = "https://volodymyrbor.github.io/iter_model/"
+keywords = ["iterator", "iterable"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
