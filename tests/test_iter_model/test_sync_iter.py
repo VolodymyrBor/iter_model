@@ -95,6 +95,32 @@ class TestSyncIter:
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
         (
+            (['here'], lambda x: True, 'here'),
+            (['wrong_answer', 'here', 'wrong_answer'], lambda x: len(x) == 4, 'here'),
+            (['wrong_answer', 'wrong_answer', 'here'], lambda x: True, 'here'),
+        ),
+    )
+    def test_last_where(self, items: list[str], condition: Callable, result: str):
+        assert SyncIter(items).last_where(condition) == result
+
+    @pytest.mark.parametrize(
+        ['items', 'condition'],
+        (
+            ([], lambda x: True),
+            (['to_long', 'to_long_long'], lambda x: len(x) == 2),
+        ),
+    )
+    def test_last_where_with_exception(self, items: list[str], condition: Callable):
+        with pytest.raises(ValueError):
+            SyncIter(items).last_where(condition)
+
+    def test_last_where_with_default(self):
+        default = object()
+        assert SyncIter([]).last_where(bool, default=default) is default
+
+    @pytest.mark.parametrize(
+        ['items', 'condition', 'result'],
+        (
             (list(range(10)), lambda x: x % 2 == 0, [x for x in range(10) if x % 2 == 0]),
             (list(range(10)), lambda x: x % 2 != 0, [x for x in range(10) if x % 2 != 0]),
         ),

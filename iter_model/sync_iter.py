@@ -88,7 +88,11 @@ class SyncIter(Generic[T]):
             count_ += 1
         return count_
 
-    def first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT:
+    def first_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,
+    ) -> T | DefaultT:
         """Find first item for which the conditional is satisfied
 
         :param func: condition function
@@ -99,6 +103,31 @@ class SyncIter(Generic[T]):
         for item in self:
             if func(item):
                 return item
+
+        if default is not _EMPTY:
+            return default
+
+        raise ValueError('Item not found')
+
+    def last_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,
+    ) -> T | DefaultT:
+        """Find last item for which the conditional is satisfied
+
+        :param func: condition function
+        :param default: default value
+
+        :raise ValueError: the item was not found and default was not provided
+        """
+        last_item = _EMPTY
+        for item in self:
+            if func(item):
+                last_item = item
+
+        if last_item is not _EMPTY:
+            return last_item
 
         if default is not _EMPTY:
             return default
