@@ -484,7 +484,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def pairwise(self) -> 'AsyncIter[tuple[T, T]]':
-        previous = await self.next()
+        try:
+            previous = await self.next()
+        except StopAsyncIteration:
+            return
         async for item in self:
             yield previous, item
             previous = item

@@ -1,7 +1,7 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable, Any
+from typing import Callable, Iterable, Any, Sequence
 
 import pytest
 
@@ -375,6 +375,70 @@ class TestAsyncIter:
         list_ = list(r)
         list_.insert(position, item)
         assert await AsyncIter.from_sync(r).append_at(position, item).to_list() == list_
+
+    async def test_item_at(self):
+        items = ['wrong', 'here', 'wrong']
+        index = items.index('here')
+        assert await AsyncIter.from_sync(items).item_at(index) == items[index]
+
+    async def test_item_at_exception(self):
+        items = ['wrong', 'wrong', 'wrong']
+        with pytest.raises(IndexError):
+            await AsyncIter.from_sync(items).item_at(len(items))
+
+    @pytest.mark.parametrize(
+        ['items', 'item', 'result'],
+        (
+            ((1, 2, 3), 1, True),
+            ((1, 2, 3), 3, True),
+            ((1, 2, 3), -1, False),
+        ),
+    )
+    async def test_contains(self, items: Sequence[int], item: int, result: bool):
+        assert await AsyncIter.from_sync(items).contains(item) is result
+
+    async def test_is_empty(self):
+        assert await AsyncIter.from_sync([]).is_empty()
+
+    async def test_is_not_empty(self):
+        assert await AsyncIter.from_sync([1]).is_not_empty()
+
+    @pytest.mark.parametrize('items', ([], range(1), range(2), range(3), range(5)))
+    async def test_pairwise(self, items: Sequence[int]):
+        assert await AsyncIter.from_sync(items).pairwise().to_list() == list(itertools.pairwise(items))
+
+    @pytest.mark.parametrize('items', ([], range(1), range(2)))
+    async def test_get_len(self, items: Sequence[int]):
+        assert await AsyncIter.from_sync(items).get_len() == len(items)
+
+    @pytest.mark.parametrize('slice_', (
+        slice(None),
+        slice(None, None),
+        slice(2, None),
+        slice(None, 4),
+        slice(100, None),
+        slice(100),
+        slice(None, None, 2),
+        slice(None, 5, 2),
+        slice(5, None, 3),
+    ))
+    async def test_getitem_dander_method_slice(self, slice_: slice):
+        r = range(10)
+        assert await AsyncIter.from_sync(r)[slice_].to_list() == list(r)[slice_]
+
+    @pytest.mark.parametrize('index', (
+        0, 1, 5,
+    ))
+    async def test_getitem_dander_method(self, index: int):
+        r = range(10)
+        assert await AsyncIter.from_sync(r)[index] == list(r)[index]
+
+    @pytest.mark.parametrize('index', (
+        -1, -5, 100,
+    ))
+    async def test_getitem_dander_method_exception(self, index: int):
+        with pytest.raises(IndexError):
+            await AsyncIter.from_sync(range(5))[index]
 
 
 async def test_async_iter():
