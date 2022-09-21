@@ -95,7 +95,7 @@ class TestAsyncIter:
 
     async def test_first_where_with_default(self):
         default = object()
-        assert await AsyncIter.from_sync([]).first_where(bool, default=default) is default
+        assert await AsyncIter.empty().first_where(bool, default=default) is default
 
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
@@ -123,7 +123,7 @@ class TestAsyncIter:
 
     async def test_last_where_with_default(self):
         default = object()
-        assert await AsyncIter.from_sync([]).last_where(bool, default=default) is default
+        assert await AsyncIter.empty().last_where(bool, default=default) is default
 
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
@@ -154,7 +154,7 @@ class TestAsyncIter:
 
     async def test_first_err(self):
         with pytest.raises(StopAsyncIteration):
-            assert await AsyncIter.from_sync([]).first()
+            assert await AsyncIter.empty().first()
 
     async def test_last(self):
         items = [4, 2, 3]
@@ -162,7 +162,7 @@ class TestAsyncIter:
 
     async def test_last_err(self):
         with pytest.raises(StopAsyncIteration):
-            assert await AsyncIter.from_sync([]).last()
+            assert await AsyncIter.empty().last()
 
     async def test_chain(self):
         l1 = [3, 5, 7]
@@ -196,7 +196,7 @@ class TestAsyncIter:
 
     async def test_next_empty(self):
         with pytest.raises(StopAsyncIteration):
-            await AsyncIter.from_sync([]).next()
+            await AsyncIter.empty().next()
 
     @pytest.mark.parametrize(
         ('it', 'expected'),
@@ -398,7 +398,7 @@ class TestAsyncIter:
         assert await AsyncIter.from_sync(items).contains(item) is result
 
     async def test_is_empty(self):
-        assert await AsyncIter.from_sync([]).is_empty()
+        assert await AsyncIter.empty().is_empty()
 
     async def test_is_not_empty(self):
         assert await AsyncIter.from_sync([1]).is_not_empty()

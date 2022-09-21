@@ -90,7 +90,7 @@ class TestSyncIter:
 
     def test_first_where_with_default(self):
         default = object()
-        assert SyncIter([]).first_where(bool, default=default) is default
+        assert SyncIter.empty().first_where(bool, default=default) is default
 
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
@@ -116,7 +116,7 @@ class TestSyncIter:
 
     def test_last_where_with_default(self):
         default = object()
-        assert SyncIter([]).last_where(bool, default=default) is default
+        assert SyncIter.empty().last_where(bool, default=default) is default
 
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
@@ -144,7 +144,7 @@ class TestSyncIter:
 
     def test_first_err(self):
         with pytest.raises(StopIteration):
-            assert SyncIter([]).first()
+            assert SyncIter.empty().first()
 
     def test_last(self):
         items = [4, 2, 3]
@@ -152,7 +152,7 @@ class TestSyncIter:
 
     def test_last_err(self):
         with pytest.raises(StopIteration):
-            assert SyncIter([]).last()
+            assert SyncIter.empty().last()
 
     def test_chain(self):
         l1 = [3, 5, 7]
@@ -186,7 +186,7 @@ class TestSyncIter:
 
     def test_next_empty(self):
         with pytest.raises(StopIteration):
-            SyncIter([]).next()
+            SyncIter.empty().next()
 
     @pytest.mark.parametrize(
         ('it', 'expected'),
@@ -394,7 +394,7 @@ class TestSyncIter:
         assert (item in SyncIter(items)) is result
 
     def test_is_empty(self):
-        assert SyncIter([]).is_empty()
+        assert SyncIter.empty().is_empty()
 
     def test_is_not_empty(self):
         assert SyncIter([1]).is_not_empty()
