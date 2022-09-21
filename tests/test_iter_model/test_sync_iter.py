@@ -330,7 +330,7 @@ class TestSyncIter:
         ),
     )
     def test_slice(self, iterable: Iterable, slice_: slice):
-        assert SyncIter(iterable).slice(
+        assert SyncIter(iterable).get_slice(
             start=slice_.start,
             stop=slice_.stop,
             step=slice_.step,

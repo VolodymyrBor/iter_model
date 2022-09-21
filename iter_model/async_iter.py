@@ -453,7 +453,7 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
+    async def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
         it = self.skip(start)
 
         if stop is not None:
@@ -462,3 +462,44 @@ class AsyncIter(Generic[T]):
         async for i, item in it.enumerate():
             if i % step == 0:
                 yield item
+
+    async def item_at(self, index: int) -> T:
+        async for i, item in self.enumerate():
+            if i == index:
+                return item
+        raise IndexError(f'item at {index} index is not found')
+
+    async def contains(self, item: T) -> bool:
+        return await self.first_where(lambda x: x == item, default=None) is not None
+
+    async def is_empty(self) -> bool:
+        try:
+            await self.next()
+        except StopAsyncIteration:
+            return True
+        return False
+
+    async def is_not_empty(self) -> bool:
+        return not await self.is_empty()
+
+    @async_iter
+    async def pairwise(self) -> 'AsyncIter[tuple[T, T]]':
+        previous = await self.next()
+        async for item in self:
+            yield previous, item
+            previous = item
+
+    async def get_len(self) -> int:
+        count = 0
+        async for _ in self:
+            count += 1
+        return count
+
+    def __getitem__(self, index: int | slice) -> Awaitable[T] | 'AsyncIter[T]':
+        if isinstance(index, slice):
+            return self.get_slice(
+                start=index.start or 0,
+                stop=index.stop or None,
+                step=index.step or 1,
+            )
+        return self.item_at(index)

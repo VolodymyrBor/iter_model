@@ -32,7 +32,7 @@ class SyncIter(Generic[T]):
     __slots__ = ('_it', )
 
     def __init__(self, it: Iterable[T]):
-        self._it = iter(it)
+        self._it: Iterator[T] = iter(it)
 
     def __iter__(self) -> Iterator[T]:
         return self._it
@@ -42,15 +42,15 @@ class SyncIter(Generic[T]):
 
     def to_list(self) -> list[T]:
         """Convert to list"""
-        return list(self)
+        return list(self._it)
 
     def to_tuple(self) -> tuple[T, ...]:
         """Convert to tuple"""
-        return tuple(self)
+        return tuple(self._it)
 
     def to_set(self) -> set[T]:
         """Convert to set"""
-        return set(self)
+        return set(self._it)
 
     def enumerate(self, start: int = 0) -> 'SyncIter[tuple[int, T]]':
         """Returns a tuple containing a count (from start which defaults to 0)
@@ -321,5 +321,48 @@ class SyncIter(Generic[T]):
         """
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
 
-    def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+    def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
         return SyncIter(itertools.islice(self, start, stop, step))
+
+    def item_at(self, index: int) -> T:
+        for i, item in self.enumerate():
+            if i == index:
+                return item
+        raise IndexError(f'item at {index} index is not found')
+
+    def contains(self, item: T) -> bool:
+        return self.first_where(lambda x: x == item, default=None) is not None
+
+    def is_empty(self) -> bool:
+        try:
+            self.next()
+        except StopIteration:
+            return True
+        return False
+
+    def is_not_empty(self) -> bool:
+        return not self.is_empty()
+
+    def pairwise(self) -> 'SyncIter[tuple[T, T]]':
+        return SyncIter(itertools.pairwise(self))
+
+    def get_len(self) -> int:
+        count = 0
+        for _ in self:
+            count += 1
+        return count
+
+    def __len__(self) -> int:
+        return self.get_len()
+
+    def __getitem__(self, index: int | slice) -> T | 'SyncIter[T]':
+        if isinstance(index, slice):
+            return self.get_slice(
+                start=index.start or 0,
+                stop=index.stop or None,
+                step=index.step or 1,
+            )
+        return self.item_at(index)
+
+    def __contains__(self, item: T) -> bool:
+        return self.contains(item)
