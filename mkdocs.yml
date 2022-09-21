@@ -19,3 +19,4 @@ nav:
   - API Documentation:
       - SyncIter: sync_iter.md
       - AsyncIter: async_iter.md
+  - Changelog: changelog.md

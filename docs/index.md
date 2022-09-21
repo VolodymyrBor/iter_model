@@ -67,7 +67,9 @@ print(result.to_list())
 
 **Source code**: [github.com/VolodymyrBor/iter_model](https://github.com/VolodymyrBor/iter_model)
 
-**Documentation**: [iter_model](http://127.0.0.1:8000/)
+**Documentation**: [iter_model](https://volodymyrbor.github.io/iter_model/)
+
+**Changelog**: [changelog](hhttps://volodymyrbor.github.io/iter_model/changelog)
 
 [Iterable]: https://docs.python.org/3/library/typing.html#typing.Iterable
 [AsyncIterable]: https://docs.python.org/3/library/typing.html#typing.AsyncIterable
