@@ -440,6 +440,10 @@ class TestSyncIter:
         with pytest.raises(IndexError):
             SyncIter(range(5))[index]
 
+    def test_empty(self):
+        it = SyncIter.empty()
+        assert it.is_empty()
+
 
 def test_sync_iter():
     r = range(10)

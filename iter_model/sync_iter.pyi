@@ -13,12 +13,15 @@ _EMPTY = object()
 
 class SyncIter(Generic[T]):
 
-    def __init__(self, it: Iterable[T]):
+    def __init__(self, it: Iterable[T] | Iterator[T]):
         self._it: Iterator[T] = NotImplemented
 
     def __iter__(self) -> Iterator[T]: ...
 
     def __next__(self) -> T: ...
+
+    @classmethod
+    def empty(cls) -> SyncIter[T]: ...
 
     def to_list(self) -> list[T]: ...
 

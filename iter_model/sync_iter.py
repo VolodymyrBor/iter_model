@@ -4,6 +4,8 @@ import operator
 from functools import wraps
 from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
+from .empty_iterator import EmptyIterator
+
 T = TypeVar('T')
 R = TypeVar('R')
 P = ParamSpec('P')
@@ -31,7 +33,7 @@ class SyncIter(Generic[T]):
 
     __slots__ = ('_it', )
 
-    def __init__(self, it: Iterable[T]):
+    def __init__(self, it: Iterable[T] | Iterator[T]):
         self._it: Iterator[T] = iter(it)
 
     def __iter__(self) -> Iterator[T]:
@@ -39,6 +41,10 @@ class SyncIter(Generic[T]):
 
     def __next__(self) -> T:
         return next(self._it)
+
+    @classmethod
+    def empty(cls) -> 'SyncIter[T]':
+        return cls(EmptyIterator())
 
     def to_list(self) -> list[T]:
         """Convert to list"""

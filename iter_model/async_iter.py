@@ -13,6 +13,7 @@ from typing import (
 )
 
 from .async_utils import asyncify
+from .empty_iterator import EmptyAsyncIterator
 
 T = TypeVar('T')
 R = TypeVar('R')
@@ -57,6 +58,10 @@ class AsyncIter(Generic[T]):
         """Create from sync iterable"""
         for item in it:
             yield item
+
+    @classmethod
+    def empty(cls) -> 'AsyncIter[T]':
+        return cls(EmptyAsyncIterator())
 
     async def to_list(self) -> list[T]:
         """Convert to list"""

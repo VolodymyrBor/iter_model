@@ -440,6 +440,10 @@ class TestAsyncIter:
         with pytest.raises(IndexError):
             await AsyncIter.from_sync(range(5))[index]
 
+    async def test_empty(self):
+        it = AsyncIter.empty()
+        assert await it.is_empty()
+
 
 async def test_async_iter():
     r = range(10)
