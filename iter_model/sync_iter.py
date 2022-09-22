@@ -44,6 +44,7 @@ class SyncIter(Generic[T]):
 
     @classmethod
     def empty(cls) -> 'SyncIter[T]':
+        """Create empty SyncIter"""
         return cls(EmptyIterator())
 
     def to_list(self) -> list[T]:
@@ -328,18 +329,22 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
 
     def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+        """Return slice from the iterable"""
         return SyncIter(itertools.islice(self, start, stop, step))
 
     def item_at(self, index: int) -> T:
+        """Return item at index"""
         for i, item in self.enumerate():
             if i == index:
                 return item
         raise IndexError(f'item at {index} index is not found')
 
     def contains(self, item: T) -> bool:
+        """Return True if the iterable contains item"""
         return self.first_where(lambda x: x == item, default=None) is not None
 
     def is_empty(self) -> bool:
+        """Return True if iterable is empty"""
         try:
             self.next()
         except StopIteration:
@@ -347,12 +352,18 @@ class SyncIter(Generic[T]):
         return False
 
     def is_not_empty(self) -> bool:
+        """Return True if iterable is not empty"""
         return not self.is_empty()
 
     def pairwise(self) -> 'SyncIter[tuple[T, T]]':
+        """Return an iterable of overlapping pairs
+
+        :return: tuple[item_0, item_1], tuple[item_1, item_2], ...
+        """
         return SyncIter(itertools.pairwise(self))
 
     def get_len(self) -> int:
+        """Return len of iterable"""
         count = 0
         for _ in self:
             count += 1

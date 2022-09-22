@@ -459,6 +459,7 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
+        """Return slice from the iterable"""
         it = self.skip(start)
 
         if stop is not None:
@@ -469,15 +470,18 @@ class AsyncIter(Generic[T]):
                 yield item
 
     async def item_at(self, index: int) -> T:
+        """Return item at index"""
         async for i, item in self.enumerate():
             if i == index:
                 return item
         raise IndexError(f'item at {index} index is not found')
 
     async def contains(self, item: T) -> bool:
+        """Return True if the iterable contains item"""
         return await self.first_where(lambda x: x == item, default=None) is not None
 
     async def is_empty(self) -> bool:
+        """Return True if iterable is empty"""
         try:
             await self.next()
         except StopAsyncIteration:
@@ -485,10 +489,15 @@ class AsyncIter(Generic[T]):
         return False
 
     async def is_not_empty(self) -> bool:
+        """Return True if iterable is not empty"""
         return not await self.is_empty()
 
     @async_iter
     async def pairwise(self) -> 'AsyncIter[tuple[T, T]]':
+        """Return an iterable of overlapping pairs
+
+        :return: tuple[item_0, item_1], tuple[item_1, item_2], ...
+        """
         try:
             previous = await self.next()
         except StopAsyncIteration:
@@ -498,6 +507,7 @@ class AsyncIter(Generic[T]):
             previous = item
 
     async def get_len(self) -> int:
+        """Return len of iterable"""
         count = 0
         async for _ in self:
             count += 1
