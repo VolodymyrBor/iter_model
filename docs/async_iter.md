@@ -11,11 +11,22 @@ Class for AsyncIterable objects.
 ### AsyncIter.from_sync
 
 ```python
+@classmethod
 def from_sync(cls, it: Iterable[T]) -> AsyncIter[T]:
 ```
 
 !!! quote ""
     Create AsyncIter from Iterable object (sync)
+
+### SyncIter.empty()
+
+```python
+@classmethod
+def empty(cls) -> SyncIter[T]:
+```
+
+!!! quote ""
+    Create empty iterable
 
 ### AsyncIter.to_list
 

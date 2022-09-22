@@ -8,6 +8,16 @@ class SyncIter
 
 Class for Iterable objects.
 
+### SyncIter.empty()
+
+```python
+@classmethod
+def empty(cls) -> SyncIter[T]:
+```
+
+!!! quote ""
+    Create empty iterable
+
 ### SyncIter.to_list
 
 ```python
