@@ -54,7 +54,7 @@ print(result.to_list())
 
 **Documentation**: [iter_model](https://volodymyrbor.github.io/iter_model/)
 
-**Changelog**: [changelog](hhttps://volodymyrbor.github.io/iter_model/changelog)
+**Changelog**: [changelog](https://volodymyrbor.github.io/iter_model/changelog)
 
 [Iterable]: https://docs.python.org/3/library/typing.html#typing.Iterable
 [AsyncIterable]: https://docs.python.org/3/library/typing.html#typing.AsyncIterable

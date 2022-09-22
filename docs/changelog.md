@@ -1,3 +1,30 @@
+### [2.0.0] (2022-09-23)
+
+⚠️ Braking changes:
+
+* ✏️ Renamed method `slice()` -> `get_slice()`
+
+✨ New features:
+
+* ✨ New methods:
+  * `last_where()`
+  * `item_at()`
+  * `contains()`
+  * `is_empty()`
+  * `is_not_empty()`
+  * `pairwise()`
+  * `get_len()`
+  * implemented `__len__()` for `SyncIter`
+  * implemented `__contains__()` for `SyncIter`
+  * implemented `__getitem__()` for `SyncIter` and `AsyncIter`
+* ✨ New constructor `empty()`: `SyncIter.empty()` and `AsyncIter.empty()`
+
+⚙️Internal Changes:
+
+* ✈️ Moved changelog to mkdocs website
+
+---
+
 ### [1.3.0] (2022-09-15)
 ✨ New features:
 
@@ -109,3 +136,4 @@
 [1.2.0]: https://github.com/VolodymyrBor/iter_model/pull/14
 [1.2.1]: https://github.com/VolodymyrBor/iter_model/pull/16
 [1.3.0]: https://github.com/VolodymyrBor/iter_model/pull/18
+[2.0.0]: https://github.com/VolodymyrBor/iter_model/pull/20
