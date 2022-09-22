@@ -451,7 +451,7 @@ def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> SyncIter[
 ### SyncIter.slice
 
 ```python
-def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncIter[T]:
+def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncIter[T]:
 ```
 
 !!! quote ""
@@ -463,3 +463,113 @@ def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncI
     * `stop` - stop of slice
     * `step` - step of slice
 
+### SyncIter.item_at
+
+```python
+def item_at(self, index: int) -> T:
+```
+
+!!! quote ""
+    Return item at index
+
+    **Parameters**:
+
+    * `index` - index if item
+
+### SyncIter.contains
+
+```python
+def contains(self, item: T) -> bool:
+```
+
+!!! quote ""
+    Return True if the iterable contains item
+
+    **Parameters**:
+
+    * `item` - item
+
+    **Returns**:
+    
+    True if the iterable contains item else False
+
+### SyncIter.is_empty
+
+```python
+def is_empty(self) -> bool:
+```
+
+!!! quote ""
+    Return True if iterable is empty
+
+    **Returns**:
+    
+    True if the iterable is empty else False
+
+### SyncIter.is_not_empty
+
+```python
+def is_not_empty(self) -> bool:
+```
+
+!!! quote ""
+    Return True if iterable is not empty
+
+    **Returns**:
+    
+    True if the iterable is not empty else False
+
+### SyncIter.pairwise
+
+```python
+def pairwise(self) -> SyncIter[tuple[T, T]]:
+```
+
+!!! quote ""
+    Return an iterable of overlapping pairs
+
+    **Returns**:
+    
+    tuple[item_0, item_1], tuple[item_1, item_2], ...
+
+### SyncIter.get_len
+
+```python
+def get_len(self) -> int:
+```
+
+!!! quote ""
+    Return len of iterable
+
+## Support Operators and Build-in func
+
+### len()
+
+!!! quote "Example"
+    ```python
+    len(SyncIter(range(5)))
+    >>> 5
+    ```    
+
+### in
+
+!!! quote "Example"
+    ```python
+    2 in SyncIter(range(5))
+    >>> True
+    ``` 
+
+### Slice
+
+!!! quote "Example"
+    ```python
+    SyncIter(range(5))[2:]
+    ``` 
+
+### Get item by index
+
+!!! quote "Example"
+    ```python
+    SyncIter(range(5))[2]
+    >>> 2
+    ``` 

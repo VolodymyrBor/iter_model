@@ -1,5 +1,6 @@
 ### [1.3.0] (2022-09-15)
 ✨ New features:
+
 * ✨ Added default parameter for first_where()
 
 ⚙️Internal Changes:

@@ -471,3 +471,98 @@ def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> Async
     * `start` - start of slice
     * `stop` - stop of slice
     * `step` - step of slice
+
+### AsyncIter.item_at
+
+```python
+async def item_at(self, index: int) -> T:
+```
+
+!!! quote ""
+    Return item at index
+
+    **Parameters**:
+
+    * `index` - index if item
+
+### AsyncIter.contains
+
+```python
+async def contains(self, item: T) -> bool:
+```
+
+!!! quote ""
+    Return True if the iterable contains item
+
+    **Parameters**:
+
+    * `item` - item
+
+    **Returns**:
+    
+    True if the iterable contains item else False
+
+### AsyncIter.is_empty
+
+```python
+async def is_empty(self) -> bool:
+```
+
+!!! quote ""
+    Return True if iterable is empty
+
+    **Returns**:
+    
+    True if the iterable is empty else False
+
+### AsyncIter.is_not_empty
+
+```python
+async def is_not_empty(self) -> bool:
+```
+
+!!! quote ""
+    Return True if iterable is not empty
+
+    **Returns**:
+    
+    True if the iterable is not empty else False
+
+### AsyncIter.pairwise
+
+```python
+def pairwise(self) -> AsyncIter[tuple[T, T]]:
+```
+
+!!! quote ""
+    Return an iterable of overlapping pairs
+
+    **Returns**:
+    
+    tuple[item_0, item_1], tuple[item_1, item_2], ...
+
+### AsyncIter.get_len
+
+```python
+async def get_len(self) -> int:
+```
+
+!!! quote ""
+    Return len of iterable
+
+## Support Operators and Build-in func
+
+### Slice
+
+!!! quote "Example"
+    ```python
+    AsyncIter(range(5))[2:]
+    ``` 
+
+### Get item by index
+
+!!! quote "Example"
+    ```python
+    await AsyncIter.from_sync(range(5))[2]
+    >>> 2
+    ``` 

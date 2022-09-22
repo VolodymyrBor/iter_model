@@ -344,7 +344,7 @@ class SyncIter(Generic[T]):
         return self.first_where(lambda x: x == item, default=None) is not None
 
     def is_empty(self) -> bool:
-        """Return True if iterable is empty"""
+        """Return True if the iterable is empty"""
         try:
             self.next()
         except StopIteration:
