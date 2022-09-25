@@ -1,6 +1,6 @@
 ### [2.0.0] (2022-09-23)
 
-⚠️ Braking changes:
+⚠️ Breaking changes:
 
 * ✏️ Renamed method `slice()` -> `get_slice()`
 
@@ -21,7 +21,7 @@
 
 ⚙️Internal Changes:
 
-* ✈️ Moved changelog to mkdocs website
+* ✈️ Moved changelog to website
 
 ---
 
