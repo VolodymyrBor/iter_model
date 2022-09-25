@@ -3,7 +3,7 @@
 ## Overview
 
 <figure markdown>
-  ![iter_model](assets/images/iter_model-logos_transparent.png){ width="300" align }
+  ![iter_model](img/iter_model-logos_transparent.png){ width="300" align }
 </figure>
 
 <a href="https://pypi.org/project/iter_model" target="_blank">

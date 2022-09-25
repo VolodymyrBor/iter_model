@@ -1,6 +1,6 @@
 <p align="center">
-    <a href="https://pypi.org/project/iter_model">
-        <img src="docs/assets/images/iter_model-logos_transparent.png" alt="IterModel" width="300">
+    <a href="https://volodymyrbor.github.io/iter_model">
+        <img src="https://volodymyrbor.github.io/iter_model/img/iter_model-logos_transparent.png" alt="IterModel" width="300">
     </a>
 </p>
 
