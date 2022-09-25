@@ -1,5 +1,33 @@
+### [2.0.0] (2022-09-25)
+
+⚠️ Breaking changes:
+
+* ✏️ Renamed method `slice()` -> `get_slice()`
+
+✨ New features:
+
+* ✨ New methods:
+  * `last_where()`
+  * `item_at()`
+  * `contains()`
+  * `is_empty()`
+  * `is_not_empty()`
+  * `pairwise()`
+  * `get_len()`
+  * implemented `__len__()` for `SyncIter`
+  * implemented `__contains__()` for `SyncIter`
+  * implemented `__getitem__()` for `SyncIter` and `AsyncIter`
+* ✨ New constructor `empty()`: `SyncIter.empty()` and `AsyncIter.empty()`
+
+⚙️Internal Changes:
+
+* ✈️ Moved changelog to website
+
+---
+
 ### [1.3.0] (2022-09-15)
 ✨ New features:
+
 * ✨ Added default parameter for first_where()
 
 ⚙️Internal Changes:
@@ -30,7 +58,9 @@
 ---
 
 ### [1.1.1] (2022-08-29)
- * 🛫 Set up full CI&CD flow
+
+  * 🛫 Set up full CI&CD flow
+
 ---
 
 ### [1.1.0] (2022-08-28)
@@ -106,3 +136,4 @@
 [1.2.0]: https://github.com/VolodymyrBor/iter_model/pull/14
 [1.2.1]: https://github.com/VolodymyrBor/iter_model/pull/16
 [1.3.0]: https://github.com/VolodymyrBor/iter_model/pull/18
+[2.0.0]: https://github.com/VolodymyrBor/iter_model/pull/20

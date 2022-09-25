@@ -2,6 +2,7 @@ import operator
 from typing import (
     TypeVar,
     Generic,
+    overload,
     Callable,
     Iterable,
     ParamSpec,
@@ -32,7 +33,10 @@ class AsyncIter(Generic[T]):
     def __anext__(self) -> Awaitable[T]: ...
 
     @classmethod
-    def from_sync(cls, it: Iterable[T]) -> 'AsyncIter[T]': ...
+    def from_sync(cls, it: Iterable[T]) -> AsyncIter[T]: ...
+
+    @classmethod
+    def empty(cls) -> AsyncIter[T]: ...
 
     async def to_list(self) -> list[T]: ...
 
@@ -53,6 +57,12 @@ class AsyncIter(Generic[T]):
     async def count(self) -> int: ...
 
     async def first_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,  # type: ignore
+    ) -> T | DefaultT: ...
+
+    async def last_where(
         self,
         func: ConditionFunc,
         default: DefaultT = _EMPTY,  # type: ignore
@@ -118,7 +128,25 @@ class AsyncIter(Generic[T]):
         fillvalue: R = None,
     ) -> AsyncIter[list[T | R]]: ...
 
-    def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIter[T]: ...
+    def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIter[T]: ...
+
+    async def item_at(self, index: int) -> T: ...
+
+    async def contains(self, item: T) -> bool: ...
+
+    async def is_empty(self) -> bool: ...
+
+    async def is_not_empty(self) -> bool: ...
+
+    def pairwise(self) -> AsyncIter[tuple[T, T]]: ...
+
+    async def get_len(self) -> int: ...
+
+    @overload
+    def __getitem__(self, index: int) -> Awaitable[T]: ...
+
+    @overload
+    def __getitem__(self, index: slice) -> AsyncIter[T]: ...
 
 def async_iter(
     func: Callable[P, AsyncIterable[T] | AsyncIterator[T]],
