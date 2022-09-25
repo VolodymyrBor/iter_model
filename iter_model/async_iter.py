@@ -13,6 +13,7 @@ from typing import (
 )
 
 from .async_utils import asyncify
+from .empty_iterator import EmptyAsyncIterator
 
 T = TypeVar('T')
 R = TypeVar('R')
@@ -57,6 +58,10 @@ class AsyncIter(Generic[T]):
         """Create from sync iterable"""
         for item in it:
             yield item
+
+    @classmethod
+    def empty(cls) -> 'AsyncIter[T]':
+        return cls(EmptyAsyncIterator())
 
     async def to_list(self) -> list[T]:
         """Convert to list"""
@@ -122,7 +127,11 @@ class AsyncIter(Generic[T]):
             count_ += 1
         return count_
 
-    async def first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT:
+    async def first_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,
+    ) -> T | DefaultT:
         """Find first item for which the conditional is satisfied
 
         :param func: condition function
@@ -134,6 +143,32 @@ class AsyncIter(Generic[T]):
         async for item in self:
             if await func(item):  # pragma: no cover
                 return item
+
+        if default is not _EMPTY:
+            return default
+
+        raise ValueError('Item not found')
+
+    async def last_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,
+    ) -> T | DefaultT:
+        """Find first item for which the conditional is satisfied
+
+        :param func: condition function
+        :param default: default value
+
+        :raise ValueError: the item was not found and default was not provided
+        """
+        func = asyncify(func)
+        last_item = _EMPTY
+        async for item in self:
+            if await func(item):  # pragma: no cover
+                last_item = item
+
+        if last_item is not _EMPTY:
+            return last_item
 
         if default is not _EMPTY:
             return default
@@ -423,7 +458,8 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
+    async def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
+        """Return slice from the iterable"""
         it = self.skip(start)
 
         if stop is not None:
@@ -432,3 +468,56 @@ class AsyncIter(Generic[T]):
         async for i, item in it.enumerate():
             if i % step == 0:
                 yield item
+
+    async def item_at(self, index: int) -> T:
+        """Return item at index"""
+        async for i, item in self.enumerate():
+            if i == index:
+                return item
+        raise IndexError(f'item at {index} index is not found')
+
+    async def contains(self, item: T) -> bool:
+        """Return True if the iterable contains item"""
+        return await self.first_where(lambda x: x == item, default=None) is not None
+
+    async def is_empty(self) -> bool:
+        """Return True if iterable is empty"""
+        try:
+            await self.next()
+        except StopAsyncIteration:
+            return True
+        return False
+
+    async def is_not_empty(self) -> bool:
+        """Return True if iterable is not empty"""
+        return not await self.is_empty()
+
+    @async_iter
+    async def pairwise(self) -> 'AsyncIter[tuple[T, T]]':
+        """Return an iterable of overlapping pairs
+
+        :return: tuple[item_0, item_1], tuple[item_1, item_2], ...
+        """
+        try:
+            previous = await self.next()
+        except StopAsyncIteration:
+            return
+        async for item in self:
+            yield previous, item
+            previous = item
+
+    async def get_len(self) -> int:
+        """Return len of iterable"""
+        count = 0
+        async for _ in self:
+            count += 1
+        return count
+
+    def __getitem__(self, index: int | slice) -> Awaitable[T] | 'AsyncIter[T]':
+        if isinstance(index, slice):
+            return self.get_slice(
+                start=index.start or 0,
+                stop=index.stop or None,
+                step=index.step or 1,
+            )
+        return self.item_at(index)

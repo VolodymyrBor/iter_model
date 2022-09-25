@@ -4,6 +4,8 @@ import operator
 from functools import wraps
 from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
+from .empty_iterator import EmptyIterator
+
 T = TypeVar('T')
 R = TypeVar('R')
 P = ParamSpec('P')
@@ -31,8 +33,8 @@ class SyncIter(Generic[T]):
 
     __slots__ = ('_it', )
 
-    def __init__(self, it: Iterable[T]):
-        self._it = iter(it)
+    def __init__(self, it: Iterable[T] | Iterator[T]):
+        self._it: Iterator[T] = iter(it)
 
     def __iter__(self) -> Iterator[T]:
         return self._it
@@ -40,17 +42,22 @@ class SyncIter(Generic[T]):
     def __next__(self) -> T:
         return next(self._it)
 
+    @classmethod
+    def empty(cls) -> 'SyncIter[T]':
+        """Create empty SyncIter"""
+        return cls(EmptyIterator())
+
     def to_list(self) -> list[T]:
         """Convert to list"""
-        return list(self)
+        return list(self._it)
 
     def to_tuple(self) -> tuple[T, ...]:
         """Convert to tuple"""
-        return tuple(self)
+        return tuple(self._it)
 
     def to_set(self) -> set[T]:
         """Convert to set"""
-        return set(self)
+        return set(self._it)
 
     def enumerate(self, start: int = 0) -> 'SyncIter[tuple[int, T]]':
         """Returns a tuple containing a count (from start which defaults to 0)
@@ -88,7 +95,11 @@ class SyncIter(Generic[T]):
             count_ += 1
         return count_
 
-    def first_where(self, func: ConditionFunc, default: DefaultT = _EMPTY) -> T | DefaultT:
+    def first_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,
+    ) -> T | DefaultT:
         """Find first item for which the conditional is satisfied
 
         :param func: condition function
@@ -99,6 +110,31 @@ class SyncIter(Generic[T]):
         for item in self:
             if func(item):
                 return item
+
+        if default is not _EMPTY:
+            return default
+
+        raise ValueError('Item not found')
+
+    def last_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,
+    ) -> T | DefaultT:
+        """Find last item for which the conditional is satisfied
+
+        :param func: condition function
+        :param default: default value
+
+        :raise ValueError: the item was not found and default was not provided
+        """
+        last_item = _EMPTY
+        for item in self:
+            if func(item):
+                last_item = item
+
+        if last_item is not _EMPTY:
+            return last_item
 
         if default is not _EMPTY:
             return default
@@ -292,5 +328,58 @@ class SyncIter(Generic[T]):
         """
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
 
-    def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+    def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+        """Return slice from the iterable"""
         return SyncIter(itertools.islice(self, start, stop, step))
+
+    def item_at(self, index: int) -> T:
+        """Return item at index"""
+        for i, item in self.enumerate():
+            if i == index:
+                return item
+        raise IndexError(f'item at {index} index is not found')
+
+    def contains(self, item: T) -> bool:
+        """Return True if the iterable contains item"""
+        return self.first_where(lambda x: x == item, default=None) is not None
+
+    def is_empty(self) -> bool:
+        """Return True if the iterable is empty"""
+        try:
+            self.next()
+        except StopIteration:
+            return True
+        return False
+
+    def is_not_empty(self) -> bool:
+        """Return True if iterable is not empty"""
+        return not self.is_empty()
+
+    def pairwise(self) -> 'SyncIter[tuple[T, T]]':
+        """Return an iterable of overlapping pairs
+
+        :return: tuple[item_0, item_1], tuple[item_1, item_2], ...
+        """
+        return SyncIter(itertools.pairwise(self))
+
+    def get_len(self) -> int:
+        """Return len of iterable"""
+        count = 0
+        for _ in self:
+            count += 1
+        return count
+
+    def __len__(self) -> int:
+        return self.get_len()
+
+    def __getitem__(self, index: int | slice) -> T | 'SyncIter[T]':
+        if isinstance(index, slice):
+            return self.get_slice(
+                start=index.start or 0,
+                stop=index.stop or None,
+                step=index.step or 1,
+            )
+        return self.item_at(index)
+
+    def __contains__(self, item: T) -> bool:
+        return self.contains(item)

@@ -1,5 +1,5 @@
 import operator
-from typing import Generic, TypeVar, ParamSpec, TypeAlias, Callable, Awaitable, Iterable, Iterator
+from typing import Generic, TypeVar, ParamSpec, TypeAlias, Callable, Awaitable, Iterable, Iterator, overload
 
 T = TypeVar('T')
 R = TypeVar('R')
@@ -13,12 +13,15 @@ _EMPTY = object()
 
 class SyncIter(Generic[T]):
 
-    def __init__(self, it: Iterable[T]):
+    def __init__(self, it: Iterable[T] | Iterator[T]):
         self._it: Iterator[T] = NotImplemented
 
     def __iter__(self) -> Iterator[T]: ...
 
     def __next__(self) -> T: ...
+
+    @classmethod
+    def empty(cls) -> SyncIter[T]: ...
 
     def to_list(self) -> list[T]: ...
 
@@ -39,6 +42,12 @@ class SyncIter(Generic[T]):
     def count(self) -> int: ...
 
     def first_where(
+        self,
+        func: ConditionFunc,
+        default: DefaultT = _EMPTY,  # type: ignore
+    ) -> T | DefaultT: ...
+
+    def last_where(
         self,
         func: ConditionFunc,
         default: DefaultT = _EMPTY,  # type: ignore
@@ -96,7 +105,29 @@ class SyncIter(Generic[T]):
 
     def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> SyncIter[tuple[T | R, ...]]: ...
 
-    def slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncIter[T]: ...
+    def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> SyncIter[T]: ...
+
+    def item_at(self, index: int) -> T: ...
+
+    def contains(self, item: T) -> bool: ...
+
+    def is_empty(self) -> bool: ...
+
+    def is_not_empty(self) -> bool: ...
+
+    def pairwise(self) -> SyncIter[tuple[T, T]]: ...
+
+    def get_len(self) -> int: ...
+
+    def __len__(self) -> int: ...
+
+    @overload
+    def __getitem__(self, index: int) -> T: ...
+
+    @overload
+    def __getitem__(self, index: slice) -> SyncIter[T]: ...
+
+    def __contains__(self, item: T) -> bool: ...
 
 
 def sync_iter(

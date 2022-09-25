@@ -1,7 +1,7 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable, Any
+from typing import Callable, Iterable, Any, Sequence
 
 import pytest
 
@@ -90,7 +90,33 @@ class TestSyncIter:
 
     def test_first_where_with_default(self):
         default = object()
-        assert SyncIter([]).first_where(bool, default=default) is default
+        assert SyncIter.empty().first_where(bool, default=default) is default
+
+    @pytest.mark.parametrize(
+        ['items', 'condition', 'result'],
+        (
+            (['here'], lambda x: True, 'here'),
+            (['wrong_answer', 'here', 'wrong_answer'], lambda x: len(x) == 4, 'here'),
+            (['wrong_answer', 'wrong_answer', 'here'], lambda x: True, 'here'),
+        ),
+    )
+    def test_last_where(self, items: list[str], condition: Callable, result: str):
+        assert SyncIter(items).last_where(condition) == result
+
+    @pytest.mark.parametrize(
+        ['items', 'condition'],
+        (
+            ([], lambda x: True),
+            (['to_long', 'to_long_long'], lambda x: len(x) == 2),
+        ),
+    )
+    def test_last_where_with_exception(self, items: list[str], condition: Callable):
+        with pytest.raises(ValueError):
+            SyncIter(items).last_where(condition)
+
+    def test_last_where_with_default(self):
+        default = object()
+        assert SyncIter.empty().last_where(bool, default=default) is default
 
     @pytest.mark.parametrize(
         ['items', 'condition', 'result'],
@@ -118,7 +144,7 @@ class TestSyncIter:
 
     def test_first_err(self):
         with pytest.raises(StopIteration):
-            assert SyncIter([]).first()
+            assert SyncIter.empty().first()
 
     def test_last(self):
         items = [4, 2, 3]
@@ -126,7 +152,7 @@ class TestSyncIter:
 
     def test_last_err(self):
         with pytest.raises(StopIteration):
-            assert SyncIter([]).last()
+            assert SyncIter.empty().last()
 
     def test_chain(self):
         l1 = [3, 5, 7]
@@ -160,7 +186,7 @@ class TestSyncIter:
 
     def test_next_empty(self):
         with pytest.raises(StopIteration):
-            SyncIter([]).next()
+            SyncIter.empty().next()
 
     @pytest.mark.parametrize(
         ('it', 'expected'),
@@ -303,8 +329,8 @@ class TestSyncIter:
             (range(10), slice(4, 7, 3)),
         ),
     )
-    def test_slice(self, iterable: Iterable, slice_: slice):
-        assert SyncIter(iterable).slice(
+    def test_get_slice(self, iterable: Iterable, slice_: slice):
+        assert SyncIter(iterable).get_slice(
             start=slice_.start,
             stop=slice_.stop,
             step=slice_.step,
@@ -334,6 +360,89 @@ class TestSyncIter:
         list_ = list(r)
         list_.insert(position, item)
         assert SyncIter(r).append_at(position, item).to_list() == list_
+
+    def test_item_at(self):
+        items = ['wrong', 'here', 'wrong']
+        index = items.index('here')
+        assert SyncIter(items).item_at(index) == items[index]
+
+    def test_item_at_exception(self):
+        items = ['wrong', 'wrong', 'wrong']
+        with pytest.raises(IndexError):
+            SyncIter(items).item_at(len(items))
+
+    @pytest.mark.parametrize(
+        ['items', 'item', 'result'],
+        (
+            ((1, 2, 3), 1, True),
+            ((1, 2, 3), 3, True),
+            ((1, 2, 3), -1, False),
+        ),
+    )
+    def test_contains(self, items: Sequence[int], item: int, result: bool):
+        assert SyncIter(items).contains(item) is result
+
+    @pytest.mark.parametrize(
+        ['items', 'item', 'result'],
+        (
+            ((1, 2, 3), 1, True),
+            ((1, 2, 3), 3, True),
+            ((1, 2, 3), -1, False),
+        ),
+    )
+    def test_contains_dander_method(self, items: Sequence[int], item: int, result: bool):
+        assert (item in SyncIter(items)) is result
+
+    def test_is_empty(self):
+        assert SyncIter.empty().is_empty()
+
+    def test_is_not_empty(self):
+        assert SyncIter([1]).is_not_empty()
+
+    @pytest.mark.parametrize('items', ([], range(1), range(2), range(3), range(5)))
+    def test_pairwise(self, items: Sequence[int]):
+        assert SyncIter(items).pairwise().to_list() == list(itertools.pairwise(items))
+
+    @pytest.mark.parametrize('items', ([], range(1), range(2)))
+    def test_get_len(self, items: Sequence[int]):
+        assert SyncIter(items).get_len() == len(items)
+
+    @pytest.mark.parametrize('items', ([], range(1), range(2)))
+    def test_get_len_dander_method(self, items: Sequence[int]):
+        assert len(SyncIter(items)) == len(items)
+
+    @pytest.mark.parametrize('slice_', (
+        slice(None),
+        slice(None, None),
+        slice(2, None),
+        slice(None, 4),
+        slice(100, None),
+        slice(100),
+        slice(None, None, 2),
+        slice(None, 5, 2),
+        slice(5, None, 3),
+    ))
+    def test_getitem_dander_method_slice(self, slice_: slice):
+        r = range(10)
+        assert SyncIter(r)[slice_].to_list() == list(r)[slice_]
+
+    @pytest.mark.parametrize('index', (
+        0, 1, 5,
+    ))
+    def test_getitem_dander_method(self, index: int):
+        r = range(10)
+        assert SyncIter(r)[index] == list(r)[index]
+
+    @pytest.mark.parametrize('index', (
+        -1, -5, 100,
+    ))
+    def test_getitem_dander_method_exception(self, index: int):
+        with pytest.raises(IndexError):
+            SyncIter(range(5))[index]
+
+    def test_empty(self):
+        it = SyncIter.empty()
+        assert it.is_empty()
 
 
 def test_sync_iter():
