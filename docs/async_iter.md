@@ -561,6 +561,15 @@ async def get_len(self) -> int:
 !!! quote ""
     Return len of iterable
 
+### AsyncIter.batches
+
+```python
+async def batches(self, batch_size: int) -> 'AsyncIter[tuple[T, ...]]':
+```
+
+!!! quote ""
+    Create iterator of tuples whose length = batch_size
+
 ## Support Operators and Build-in func
 
 ### Slice

@@ -522,6 +522,7 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def batches(self, batch_size: int) -> 'AsyncIter[tuple[T, ...]]':
+        """Create iterator of tuples whose length = batch_size"""
         while True:
             try:
                 item = await self.next()
