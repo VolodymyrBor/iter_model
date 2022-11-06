@@ -37,10 +37,17 @@ class TestAsyncIter:
         list_ = ['First', 'Second', 'Third']
         assert await AsyncIter(to_async_iter(list_)).enumerate(start).to_list() == list(enumerate(list_, start=start))
 
-    @pytest.mark.parametrize('count', (0, 5, 100))
-    async def test_take(self, count: int):
+    @pytest.mark.parametrize('counts', (
+        (0, 4, 3),
+        (0, 1, 10),
+        (2, 100),
+    ))
+    async def test_take(self, counts: tuple[int]):
         r = range(10)
-        assert await AsyncIter(to_async_iter(r)).take(count).to_list() == list(itertools.islice(r, count))
+        sync_iter_ = AsyncIter.from_sync(r)
+        it = iter(r)
+        for count in counts:
+            assert await sync_iter_.take(count).to_list() == list(itertools.islice(it, count))
 
     @pytest.mark.parametrize('func', (lambda x: x ** 2, asyncify(lambda x: x ** 2)))
     async def test_map(self, func: Callable):
@@ -443,6 +450,23 @@ class TestAsyncIter:
     async def test_empty(self):
         it = AsyncIter.empty()
         assert await it.is_empty()
+
+    @pytest.mark.parametrize(['it', 'batch_size', 'expected'], (
+        (tuple(range(10)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8), (9, ))),
+        (tuple(range(9)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8))),
+        (tuple(range(1)), 3, ((0, ), ), ),
+        (tuple(range(6)), 4, ((0, 1, 2, 3), (4, 5))),
+        (tuple(range(0)), 100, tuple()),
+    ))
+    async def test_batches(
+        self,
+        it: Sequence[int],
+        batch_size: int,
+        expected: tuple,
+    ):
+        sync_it = AsyncIter.from_sync(it)
+        batches = sync_it.batches(batch_size)
+        assert await batches.map(tuple).to_tuple() == expected
 
 
 async def test_async_iter():

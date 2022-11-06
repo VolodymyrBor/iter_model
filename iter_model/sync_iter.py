@@ -369,6 +369,17 @@ class SyncIter(Generic[T]):
             count += 1
         return count
 
+    @sync_iter
+    def batches(self, batch_size: int) -> 'SyncIter[tuple[T, ...]]':
+        while True:
+            try:
+                item = self.next()
+            except StopIteration:
+                break
+            it = self.append_left(item)
+            batch = it.take(batch_size).to_tuple()
+            yield batch
+
     def __len__(self) -> int:
         return self.get_len()
 

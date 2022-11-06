@@ -91,10 +91,17 @@ class AsyncIter(Generic[T]):
     @async_iter
     async def take(self, limit: int) -> 'AsyncIter[T]':
         """Take 'count' items from iterator"""
-        async for index, item in self.enumerate():
-            if index >= limit:
+
+        count = 0
+        while True:
+            if count >= limit:
                 break
-            yield item
+            try:
+                yield await self.next()
+            except StopAsyncIteration:
+                break
+            else:
+                count += 1
 
     @async_iter
     async def map(self, func: Callable[[T], R | Awaitable[R]]) -> 'AsyncIter[R]':
@@ -512,6 +519,17 @@ class AsyncIter(Generic[T]):
         async for _ in self:
             count += 1
         return count
+
+    @async_iter
+    async def batches(self, batch_size: int) -> 'AsyncIter[tuple[T, ...]]':
+        while True:
+            try:
+                item = await self.next()
+            except StopAsyncIteration:
+                break
+            it = self.append_left(item)
+            batch = await it.take(batch_size).to_tuple()
+            yield batch
 
     def __getitem__(self, index: int | slice) -> Awaitable[T] | 'AsyncIter[T]':
         if isinstance(index, slice):
