@@ -1,6 +1,8 @@
 ### [?.?.?] (2022-11-??)
 
 ⚠️ Fixed a bug in method AsyncIter.take(). 
+⬆️ Added official support for python 3.11
+
 
 ✨ New features:
 * ✨ New methods:
