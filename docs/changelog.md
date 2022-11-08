@@ -1,3 +1,13 @@
+### [?.?.?] (2022-11-??)
+
+⚠️ Fixed a bug in method AsyncIter.take(). 
+
+✨ New features:
+* ✨ New methods:
+  * `batches()`
+
+---
+
 ### [2.0.0] (2022-09-25)
 
 ⚠️ Breaking changes:

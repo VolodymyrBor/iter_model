@@ -551,6 +551,15 @@ def get_len(self) -> int:
 !!! quote ""
     Return len of iterable
 
+### SyncIter.batches
+
+```python
+def batches(self, batch_size: int) -> 'SyncIter[tuple[T, ...]]':
+```
+
+!!! quote ""
+    Create iterator of tuples whose length = batch_size
+
 ## Support Operators and Build-in func
 
 ### len()
