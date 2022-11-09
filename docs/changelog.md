@@ -1,12 +1,11 @@
-### [?.?.?] (2022-11-??)
+### [2.1.0] (2022-11-10)
 
 ⚠️ Fixed a bug in method AsyncIter.take(). 
-⬆️ Added official support for python 3.11
-
 
 ✨ New features:
-* ✨ New methods:
-  * `batches()`
+   * Added new method: `batches()`
+   * ⬆️ Added official support for python 3.11
+   * 🎉 Update docs using mkdocstrings
 
 ---
 
