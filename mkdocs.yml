@@ -1,9 +1,21 @@
 site_name: iter_model
 repo_url: https://github.com/VolodymyrBor/iter_model
+
 theme:
   name: material
   favicon: img/iter_model_logo_white_icon.png
   logo: img/iter_model_logo_white_icon.png
+
+plugins:
+  - mkdocstrings:
+      custom_templates: templates
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+            docstring_style: sphinx
+
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -13,6 +25,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+
 nav:
   - Home: index.md
   - Use with generator: generators_usage.md
