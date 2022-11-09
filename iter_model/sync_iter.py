@@ -20,6 +20,14 @@ _EMPTY = object()
 def sync_iter(func: Callable[P, Iterable[T]]) -> Callable[P, 'SyncIter[T]']:
     """Convert result of the func to SyncIter
 
+    Usage:
+    ```python
+    @sync_iter
+    def my_generator() -> SyncIter[int]:
+        for i in range(10):
+            yield i
+    ```
+
     :param func: function that returns iterable
     :return: new function
     """
@@ -44,19 +52,31 @@ class SyncIter(Generic[T]):
 
     @classmethod
     def empty(cls) -> 'SyncIter[T]':
-        """Create empty SyncIter"""
+        """Create empty iterable
+
+        :return: empty iterable
+        """
         return cls(EmptyIterator())
 
     def to_list(self) -> list[T]:
-        """Convert to list"""
+        """Convert to list
+
+        :return: list of items
+        """
         return list(self._it)
 
     def to_tuple(self) -> tuple[T, ...]:
-        """Convert to tuple"""
+        """Convert to tuple
+
+        :return: tuple of items
+        """
         return tuple(self._it)
 
     def to_set(self) -> set[T]:
-        """Convert to set"""
+        """Convert to set
+
+        :return: set of items
+        """
         return set(self._it)
 
     def enumerate(self, start: int = 0) -> 'SyncIter[tuple[int, T]]':
@@ -69,27 +89,42 @@ class SyncIter(Generic[T]):
         return SyncIter(enumerate(self, start=start))
 
     def take(self, count: int) -> 'SyncIter[T]':
-        """Take 'count' items from iterator"""
+        """Take 'count' items from iterator
+
+        :return: iterable that contains 'count' items
+        """
         return SyncIter(itertools.islice(self, count))
 
     def map(self, func: Callable[[T], R]) -> 'SyncIter[R]':
         """Return an iterator that applies function to every item of iterable,
-         yielding the results"""
+         yielding the results
+
+         :return: async iterable
+         """
         return SyncIter(map(func, self))
 
     @sync_iter
     def skip(self, count: int) -> 'SyncIter[T]':
-        """Skip 'count' items from iterator"""
+        """Skip 'count' items from iterator
+
+        :return: async iterable
+        """
         for index, item in self.enumerate():
             if index >= count:
                 yield item
 
     def skip_while(self, func: ConditionFunc) -> 'SyncIter[T]':
-        """Skips leading elements while conditional is satisfied"""
+        """Skips leading elements while conditional is satisfied
+
+        :return: async iterable
+        """
         return SyncIter(itertools.dropwhile(func, self))
 
     def count(self) -> int:
-        """Return count of items in iterator"""
+        """Return count of items in iterator
+
+        :return: count of items
+        """
         count_ = 0
         for _ in self:
             count_ += 1
@@ -104,6 +139,8 @@ class SyncIter(Generic[T]):
 
         :param func: condition function
         :param default: default value
+
+         :return: item
 
         :raise ValueError: the item was not found and default was not provided
         """
@@ -126,6 +163,8 @@ class SyncIter(Generic[T]):
         :param func: condition function
         :param default: default value
 
+        :return: item
+
         :raise ValueError: the item was not found and default was not provided
         """
         last_item = _EMPTY
@@ -142,22 +181,34 @@ class SyncIter(Generic[T]):
         raise ValueError('Item not found')
 
     def where(self, func: ConditionFunc) -> 'SyncIter[T]':
-        """Filter items by condition"""
+        """Filter items by condition
+
+        :return: iterable
+        """
         return SyncIter(filter(func, self))
 
     def take_while(self, func: ConditionFunc) -> 'SyncIter[T]':
-        """Take items while the conditional is satisfied"""
+        """Take items while the conditional is satisfied
+
+        :return: iterable
+        """
         return SyncIter(itertools.takewhile(func, self))
 
     def next(self) -> T:
-        """Returns the next item"""
+        """Returns the next item
+
+        :return: first item
+        """
         try:
             return next(self)
         except StopIteration:
             raise StopIteration('Iterable is empty')
 
     def last(self) -> T:
-        """Return the last item"""
+        """Return the last item
+
+        :return: last item
+        """
         last_item = initial = object()
         for item in self:
             last_item = item
@@ -168,24 +219,39 @@ class SyncIter(Generic[T]):
         return last_item
 
     def chain(self, *iterables: Iterable[T]) -> 'SyncIter[T]':
-        """Chain with other iterables"""
+        """Chain with other iterables
+
+        :return: iterable
+        """
         return SyncIter(itertools.chain(self, *iterables))
 
     def all(self) -> bool:
-        """Checks whether all elements of this iterable are true"""
+        """Checks whether all elements of this iterable are true
+
+        :return: True if all elements is true else False
+        """
         return all(self)
 
     def any(self) -> bool:
-        """Checks whether any element of this iterable is true"""
+        """Checks whether any element of this iterable is true
+
+        :return: True if any elements are true else False
+        """
         return any(self)
 
     def first(self) -> T:
-        """Return first item. The same as next()"""
+        """Return first item. The same as next()
+
+        :return: first item
+        """
         return self.next()
 
     @sync_iter
     def mark_first(self) -> 'SyncIter[tuple[T, bool]]':
-        """Mark first item. Yields: tuple[item, is_first]"""
+        """Mark first item.
+
+        :return: Yields: tuple[item, is_first]
+        """
         try:
             first = self.next()
         except StopIteration:
@@ -196,7 +262,10 @@ class SyncIter(Generic[T]):
 
     @sync_iter
     def mark_last(self) -> 'SyncIter[tuple[T, bool]]':
-        """Mark last item. Yields: tuple[item, is_last]"""
+        """Mark last item
+
+        :return: Yields: tuple[item, is_last]
+        """
         try:
             previous_item = self.next()
         except StopIteration:
@@ -209,7 +278,10 @@ class SyncIter(Generic[T]):
 
     @sync_iter
     def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':
-        """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
+        """Mark first and last item
+
+        :return: Yields: tuple[item, is_first, is_last]
+        """
         try:
             previous_item = self.next()
         except StopIteration:
@@ -232,7 +304,9 @@ class SyncIter(Generic[T]):
 
         :param func: func[accumulated value, next item]
         :param initial: initial value of iterable. Serves like default value if iterable is empty.
+
         :return: reduced value
+
         :raise ValueError: if initial is not provided and iterable is empty
         """
         if initial is _EMPTY:
@@ -252,7 +326,9 @@ class SyncIter(Generic[T]):
 
         :param key: the result of the function will be used to compare the elements.
         :param default: default value in case iterable is empty
+
         :return: the biggest item
+
         :raise ValueError: when iterable is empty and default value is not provided
         """
         if default is _EMPTY:
@@ -269,7 +345,9 @@ class SyncIter(Generic[T]):
 
         :param key: the result of the function will be used to compare the elements.
         :param default: default value in case iterable is empty
+
         :return: the smallest item
+
         :raise ValueError: when iterable is empty and default value is not provided
         """
         if default is _EMPTY:
@@ -282,24 +360,35 @@ class SyncIter(Generic[T]):
 
         :param func: func[accumulated value, next value], by default operator.add
         :param initial: initial value of series
+
+         :return: iterable
         """
         return SyncIter(itertools.accumulate(self, func=func, initial=initial))
 
     @sync_iter
     def append_left(self, item: T) -> 'SyncIter[T]':
-        """Append an item to left of the iterable (start)"""
+        """Append an item to left of the iterable (start)
+
+         :return: iterable
+        """
         yield item
         yield from self
 
     @sync_iter
     def append_right(self, item: T) -> 'SyncIter[T]':
-        """Append an item to right of the iterable (end)"""
+        """Append an item to right of the iterable (end)
+
+         :return: iterable
+        """
         yield from self
         yield item
 
     @sync_iter
     def append_at(self, index: int, item: T) -> 'SyncIter[T]':
-        """Append at the position in to the iterable"""
+        """Append at the position in to the iterable
+
+         :return: iterable
+        """
         i = 0
         for i, item_ in self.enumerate():
             if i == index:
@@ -314,6 +403,8 @@ class SyncIter(Generic[T]):
         comes from the i-th iterable argument to zip().  This continues until the
         shortest argument is exhausted.
 
+        :return: iterable
+
         :raise ValueError: when strict is true and one of the arguments is exhausted before the others
         """
         return SyncIter(zip(self, *iterables, strict=strict))
@@ -324,27 +415,41 @@ class SyncIter(Generic[T]):
         comes from the i-th iterable argument to zip().  This continues until the
         longest argument is exhausted.
 
+        :return: iterable
+
         :param fillvalue: when the shorter iterables are exhausted, the fillvalue is substituted in their place
         """
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
 
     def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
-        """Return slice from the iterable"""
+        """Return slice from the iterable
+
+        :return: iterable
+        """
         return SyncIter(itertools.islice(self, start, stop, step))
 
     def item_at(self, index: int) -> T:
-        """Return item at index"""
+        """Return item at index
+
+        :return: item
+        """
         for i, item in self.enumerate():
             if i == index:
                 return item
         raise IndexError(f'item at {index} index is not found')
 
     def contains(self, item: T) -> bool:
-        """Return True if the iterable contains item"""
+        """Return True if the iterable contains item
+
+        :return: bool
+        """
         return self.first_where(lambda x: x == item, default=None) is not None
 
     def is_empty(self) -> bool:
-        """Return True if the iterable is empty"""
+        """Return True if the iterable is empty
+
+        :return: bool
+        """
         try:
             self.next()
         except StopIteration:
@@ -352,7 +457,10 @@ class SyncIter(Generic[T]):
         return False
 
     def is_not_empty(self) -> bool:
-        """Return True if iterable is not empty"""
+        """Return True if iterable is not empty
+
+        :return: bool
+        """
         return not self.is_empty()
 
     def pairwise(self) -> 'SyncIter[tuple[T, T]]':
@@ -363,7 +471,10 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.pairwise(self))
 
     def get_len(self) -> int:
-        """Return len of iterable"""
+        """Return len of iterable
+
+        :return: length
+        """
         count = 0
         for _ in self:
             count += 1
@@ -371,7 +482,10 @@ class SyncIter(Generic[T]):
 
     @sync_iter
     def batches(self, batch_size: int) -> 'SyncIter[tuple[T, ...]]':
-        """Create iterator of tuples whose length = batch_size"""
+        """Create iterable of tuples whose length = batch_size
+
+        :return: iterable of tuples whose length = batch_size
+        """
         while True:
             try:
                 item = self.next()
