@@ -466,7 +466,7 @@ class TestAsyncIter:
     ):
         sync_it = AsyncIter.from_sync(it)
         batches = sync_it.batches(batch_size)
-        assert await batches.map(tuple).to_tuple() == expected
+        assert await batches.map(tuple).to_tuple() == expected  # type: ignore
 
 
 async def test_async_iter():

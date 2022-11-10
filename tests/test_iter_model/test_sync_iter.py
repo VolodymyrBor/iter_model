@@ -466,7 +466,7 @@ class TestSyncIter:
     ):
         sync_it = SyncIter(it)
         batches = sync_it.batches(batch_size)
-        assert batches.map(tuple).to_tuple() == expected
+        assert batches.map(tuple).to_tuple() == expected  # type: ignore
 
 
 def test_sync_iter():
