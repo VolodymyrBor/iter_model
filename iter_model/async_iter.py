@@ -29,6 +29,14 @@ _EMPTY = object()
 def async_iter(func: Callable[P, AsyncIterable[T]]) -> Callable[P, 'AsyncIter[T]']:
     """Convert result of the func to AsyncIter
 
+    Usage:
+    ```python
+    @async_iter
+    def my_generator() -> AsyncIter[int]:
+        for i in range(10):
+            yield i
+    ```
+
     :param func: function that returns async iterable
     :return: new function
     """
@@ -55,24 +63,41 @@ class AsyncIter(Generic[T]):
     @classmethod
     @async_iter
     async def from_sync(cls, it: Iterable[T]) -> 'AsyncIter[T]':
-        """Create from sync iterable"""
+        """Create from sync iterable
+
+        :param it: Iterable[T], iterable
+        :return: async iterable
+        """
         for item in it:
             yield item
 
     @classmethod
     def empty(cls) -> 'AsyncIter[T]':
+        """Create empty iterable
+
+        :return: empty iterable
+        """
         return cls(EmptyAsyncIterator())
 
     async def to_list(self) -> list[T]:
-        """Convert to list"""
+        """Convert to list
+
+        :return: list of items
+        """
         return [item async for item in self]
 
     async def to_tuple(self) -> tuple[T, ...]:
-        """Convert to tuple"""
+        """Convert to tuple
+
+        :return: tuple of items
+        """
         return tuple([item async for item in self])
 
     async def to_set(self) -> set[T]:
-        """Convert to set"""
+        """Convert to set
+
+        :return: set of items
+        """
         return set([item async for item in self])
 
     @async_iter
@@ -90,30 +115,48 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def take(self, limit: int) -> 'AsyncIter[T]':
-        """Take 'count' items from iterator"""
-        async for index, item in self.enumerate():
-            if index >= limit:
+        """Take 'count' items from iterator
+
+        :return: iterable that contains 'count' items
+        """
+
+        count = 0
+        while True:
+            if count >= limit:
                 break
-            yield item
+            try:
+                yield await self.next()
+            except StopAsyncIteration:
+                break
+            else:
+                count += 1
 
     @async_iter
     async def map(self, func: Callable[[T], R | Awaitable[R]]) -> 'AsyncIter[R]':
         """Return an iterator that applies function to every item of iterable,
-        yielding the results"""
+        yielding the results
+
+        :return: iterable
+        """
         func = asyncify(func)
         async for item in self:
             yield await func(item)
 
     @async_iter
     async def skip(self, count: int) -> 'AsyncIter[T]':
-        """Skip 'count' items from iterator"""
+        """Skip 'count' items from iterator
+        :return: iterable without first 'count' items
+        """
         async for index, item in self.enumerate():
             if index >= count:
                 yield item
 
     @async_iter
     async def skip_while(self, func: ConditionFunc) -> 'AsyncIter[T]':
-        """Skips leading elements while conditional is satisfied"""
+        """Skips leading elements while conditional is satisfied
+
+        :return: iterable
+        """
         func = asyncify(func)
         async for item in self:  # pragma: no cover
             if await func(item):
@@ -121,7 +164,10 @@ class AsyncIter(Generic[T]):
             yield item
 
     async def count(self) -> int:
-        """Return count of items in iterator"""
+        """Return count of items in iterator
+
+        :return: count of items
+        """
         count_ = 0
         async for _ in self:
             count_ += 1
@@ -136,6 +182,8 @@ class AsyncIter(Generic[T]):
 
         :param func: condition function
         :param default: default value
+
+        :return: item
 
         :raise ValueError: the item was not found and default was not provided
         """
@@ -159,6 +207,8 @@ class AsyncIter(Generic[T]):
         :param func: condition function
         :param default: default value
 
+        :return: item
+
         :raise ValueError: the item was not found and default was not provided
         """
         func = asyncify(func)
@@ -177,7 +227,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def where(self, func: ConditionFunc) -> 'AsyncIter[T]':
-        """Filter item by condition"""
+        """Filter item by condition
+
+        :return: iterable
+        """
         func = asyncify(func)
         async for item in self:
             if await func(item):
@@ -185,7 +238,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def take_while(self, func: ConditionFunc) -> 'AsyncIter[T]':
-        """Take items while the conditional is satisfied"""
+        """Take items while the conditional is satisfied
+
+        :return: iterable
+        """
         func = asyncify(func)
         async for item in self:
             if await func(item):
@@ -194,14 +250,20 @@ class AsyncIter(Generic[T]):
                 break
 
     async def next(self) -> T:
-        """Returns the first item"""
+        """Returns the first item
+
+        :return: first item
+        """
         try:
             return await anext(self)
         except StopAsyncIteration:
             raise StopAsyncIteration('Iterable is empty')
 
     async def last(self) -> T:
-        """Returns the last item"""
+        """Returns the last item
+
+        :return: last item
+        """
         last_item = initial = object()
         async for item in self:
             last_item = item
@@ -213,7 +275,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def chain(self, *iterables: AsyncIterable[T]) -> 'AsyncIter[T]':
-        """Chain with other iterables"""
+        """Chain with other iterables
+
+        :return: iterable
+        """
         async for item in self:
             yield item
 
@@ -222,26 +287,38 @@ class AsyncIter(Generic[T]):
                 yield item
 
     async def all(self) -> bool:
-        """Checks whether all elements of this iterable are true"""
+        """Checks whether all elements of this iterable are true
+
+        :return: True if all elements is true else False
+        """
         async for item in self:
             if not bool(item):  # pragma: no cover
                 return False
         return True
 
     async def any(self) -> bool:
-        """Checks whether any element of this iterable is true"""
+        """Checks whether any element of this iterable is true
+
+        :return: True if any elements are true else False
+        """
         async for item in self:
             if bool(item):  # pragma: no cover
                 return True
         return False
 
     async def first(self) -> T:
-        """Returns first item"""
+        """Returns first item
+
+        :return: first item
+        """
         return await self.next()
 
     @async_iter
     async def mark_first(self) -> 'AsyncIter[tuple[T, bool]]':
-        """Mark first item. Yields: tuple[item, is_first]"""
+        """Mark first item
+
+        :return: Yields: tuple[item, is_first]
+        """
         try:
             first = await self.next()
         except StopAsyncIteration:
@@ -253,7 +330,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def mark_last(self) -> 'AsyncIter[tuple[T, bool]]':
-        """Mark last item. Yields: tuple[item, is_last]"""
+        """Mark last item
+
+        :return: Yields: tuple[item, is_last]
+        """
         try:
             previous_item = await self.next()
         except StopAsyncIteration:
@@ -266,7 +346,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def mark_first_last(self) -> 'AsyncIter[tuple[T, bool, bool]]':
-        """Mark first and last item. Yields: tuple[item, is_first, is_last]"""
+        """Mark first and last item
+
+        :return: Yields: tuple[item, is_first, is_last]
+        """
         try:
             previous_item = await self.next()
         except StopAsyncIteration:
@@ -289,7 +372,9 @@ class AsyncIter(Generic[T]):
 
         :param func: func[accumulated value, next item]
         :param initial: initial value of iterable. Serves like default value if iterable is empty.
+
         :return: reduced value
+
         :raise ValueError: if initial is not provided and iterable is empty
         """
         if initial is _EMPTY:
@@ -312,7 +397,9 @@ class AsyncIter(Generic[T]):
 
         :param key: the result of the function will be used to compare the elements.
         :param default: default value in case iterable is empty
+
         :return: the biggest item
+
         :raise ValueError: when iterable is empty and default value is not provided
         """
         try:
@@ -340,7 +427,9 @@ class AsyncIter(Generic[T]):
 
         :param key: the result of the function will be used to compare the elements.
         :param default: default value in case iterable is empty
+
         :return: the smallest item
+
         :raise ValueError: when iterable is empty and default value is not provided
         """
         try:
@@ -369,6 +458,8 @@ class AsyncIter(Generic[T]):
 
         :param func: func[accumulated value, next value], by default operator.add
         :param initial: initial value of series
+
+        :return: iterable
         """
         total = initial
         if total is None:
@@ -385,21 +476,30 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def append_left(self, item: T) -> 'AsyncIter[T]':
-        """Append an item to left of the iterable (start)"""
+        """Append an item to left of the iterable (start)
+
+        :return: iterable
+        """
         yield item
         async for item_ in self:
             yield item_
 
     @async_iter
     async def append_right(self, item: T) -> 'AsyncIter[T]':
-        """Append an item to right of the iterable (end)"""
+        """Append an item to right of the iterable (end)
+
+        :return: iterable
+        """
         async for item_ in self:
             yield item_
         yield item
 
     @async_iter
     async def append_at(self, index: int, item: T) -> 'AsyncIter[T]':
-        """Append at the position in to the iterable"""
+        """Append at the position in to the iterable
+
+        :return: iterable
+        """
         i = 0
         async for i, item_ in self.enumerate():
             if i == index:
@@ -414,6 +514,8 @@ class AsyncIter(Generic[T]):
         passed as positional arguments to zip().  The i-th element in every tuple
         comes from the i-th iterable argument to zip().  This continues until the
         shortest argument is exhausted.
+
+        :return: iterable
 
         :raise ValueError: when strict is true and one of the arguments is exhausted before the others
         """
@@ -442,6 +544,8 @@ class AsyncIter(Generic[T]):
         longest argument is exhausted.
 
         :param fillvalue: when the shorter iterables are exhausted, the fillvalue is substituted in their place
+
+        :return: iterable
         """
         iterables = (self, *iterables)
         while True:
@@ -459,7 +563,10 @@ class AsyncIter(Generic[T]):
 
     @async_iter
     async def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'AsyncIter[T]':
-        """Return slice from the iterable"""
+        """Return slice from the iterable
+
+        :return: iterable
+        """
         it = self.skip(start)
 
         if stop is not None:
@@ -470,18 +577,27 @@ class AsyncIter(Generic[T]):
                 yield item
 
     async def item_at(self, index: int) -> T:
-        """Return item at index"""
+        """Return item at index
+
+        :return: item
+        """
         async for i, item in self.enumerate():
             if i == index:
                 return item
         raise IndexError(f'item at {index} index is not found')
 
     async def contains(self, item: T) -> bool:
-        """Return True if the iterable contains item"""
+        """Return True if the iterable contains item
+
+        :return: True if the iterable contains item
+        """
         return await self.first_where(lambda x: x == item, default=None) is not None
 
     async def is_empty(self) -> bool:
-        """Return True if iterable is empty"""
+        """Return True if iterable is empty
+
+        :return: Return True if iterable is empty
+        """
         try:
             await self.next()
         except StopAsyncIteration:
@@ -489,7 +605,10 @@ class AsyncIter(Generic[T]):
         return False
 
     async def is_not_empty(self) -> bool:
-        """Return True if iterable is not empty"""
+        """Return True if iterable is not empty
+
+        :return: True if iterable is not empty
+        """
         return not await self.is_empty()
 
     @async_iter
@@ -507,11 +626,29 @@ class AsyncIter(Generic[T]):
             previous = item
 
     async def get_len(self) -> int:
-        """Return len of iterable"""
+        """Return len of iterable
+
+        :return: length
+        """
         count = 0
         async for _ in self:
             count += 1
         return count
+
+    @async_iter
+    async def batches(self, batch_size: int) -> 'AsyncIter[tuple[T, ...]]':
+        """Create iterator of tuples whose length = batch_size
+
+        :return: iterator of tuples whose length = batch_size
+        """
+        while True:
+            try:
+                item = await self.next()
+            except StopAsyncIteration:
+                break
+            it = self.append_left(item)
+            batch = await it.take(batch_size).to_tuple()
+            yield batch
 
     def __getitem__(self, index: int | slice) -> Awaitable[T] | 'AsyncIter[T]':
         if isinstance(index, slice):

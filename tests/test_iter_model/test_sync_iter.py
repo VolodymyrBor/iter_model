@@ -36,10 +36,17 @@ class TestSyncIter:
         list_ = ['First', 'Second', 'Third']
         assert SyncIter(list_).enumerate(start).to_list() == list(enumerate(list_, start=start))
 
-    @pytest.mark.parametrize('count', (0, 5, 100))
-    def test_take(self, count: int):
+    @pytest.mark.parametrize('counts', (
+        (0, 4, 3),
+        (0, 1, 10),
+        (2, 100),
+    ))
+    def test_take(self, counts: tuple[int]):
         r = range(10)
-        assert SyncIter(r).take(count).to_list() == list(itertools.islice(r, count))
+        sync_iter_ = SyncIter(r)
+        it = iter(r)
+        for count in counts:
+            assert sync_iter_.take(count).to_list() == list(itertools.islice(it, count))
 
     def test_map(self):
         r = range(10)
@@ -443,6 +450,23 @@ class TestSyncIter:
     def test_empty(self):
         it = SyncIter.empty()
         assert it.is_empty()
+
+    @pytest.mark.parametrize(['it', 'batch_size', 'expected'], (
+        (tuple(range(10)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8), (9, ))),
+        (tuple(range(9)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8))),
+        (tuple(range(1)), 3, ((0, ), ), ),
+        (tuple(range(6)), 4, ((0, 1, 2, 3), (4, 5))),
+        (tuple(range(0)), 100, tuple()),
+    ))
+    def test_batches(
+        self,
+        it: Sequence[int],
+        batch_size: int,
+        expected: tuple,
+    ):
+        sync_it = SyncIter(it)
+        batches = sync_it.batches(batch_size)
+        assert batches.map(tuple).to_tuple() == expected  # type: ignore
 
 
 def test_sync_iter():

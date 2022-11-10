@@ -1,3 +1,14 @@
+### [2.1.0] (2022-11-10)
+
+⚠️ Fixed a bug in method AsyncIter.take(). 
+
+✨ New features:
+   * Added new method: `batches()`
+   * ⬆️ Added official support for python 3.11
+   * 🎉 Update docs using mkdocstrings
+
+---
+
 ### [2.0.0] (2022-09-25)
 
 ⚠️ Breaking changes:
