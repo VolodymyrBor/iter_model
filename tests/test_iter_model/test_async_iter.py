@@ -71,6 +71,17 @@ class TestAsyncIter:
         """Skips leading elements while conditional is satisfied"""
         return await AsyncIter.from_sync(items).skip_while(condition).to_list() == result
 
+    @pytest.mark.parametrize(
+        ['items', 'condition', 'result'],
+        (
+            (list(range(10)), lambda x: x % 2 == 0, [x for x in range(10) if x % 2 != 0]),
+            (list(range(10)), lambda x: x % 2 != 0, [x for x in range(10) if x % 2 == 0]),
+            (list(range(10)), asyncify(lambda x: x % 2 != 0), [x for x in range(10) if x % 2 == 0]),
+        ),
+    )
+    async def test_skip_where(self, items: list[int], condition: Callable, result: list[int]):
+        assert await AsyncIter(to_async_iter(items)).skip_where(condition).to_list() == result
+
     @pytest.mark.parametrize('count', (0, 1, 100))
     async def test_count(self, count: int):
         r = range(count)

@@ -1,3 +1,10 @@
+### [2.2.0] (2022-11-25)
+
+✨ New features:
+   * Added new method: `skip_where()`
+
+---
+
 ### [2.1.0] (2022-11-10)
 
 ⚠️ Fixed a bug in method AsyncIter.take(). 
@@ -148,3 +155,5 @@
 [1.2.1]: https://github.com/VolodymyrBor/iter_model/pull/16
 [1.3.0]: https://github.com/VolodymyrBor/iter_model/pull/18
 [2.0.0]: https://github.com/VolodymyrBor/iter_model/pull/20
+[2.1.0]: https://github.com/VolodymyrBor/iter_model/pull/24
+[2.2.0]: https://github.com/VolodymyrBor/iter_model/pull/26

@@ -163,6 +163,17 @@ class AsyncIter(Generic[T]):
                 break
             yield item
 
+    @async_iter
+    async def skip_where(self, func: ConditionFunc) -> 'AsyncIter':
+        """Skip elements where conditional is satisfied
+
+        :return: async iterable
+        """
+        func = asyncify(func)
+        async for item in self:
+            if not await func(item):
+                yield item
+
     async def count(self) -> int:
         """Return count of items in iterator
 

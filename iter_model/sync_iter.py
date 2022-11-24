@@ -116,9 +116,16 @@ class SyncIter(Generic[T]):
     def skip_while(self, func: ConditionFunc) -> 'SyncIter[T]':
         """Skips leading elements while conditional is satisfied
 
-        :return: async iterable
+        :return: sync iterable
         """
         return SyncIter(itertools.dropwhile(func, self))
+
+    def skip_where(self, func: ConditionFunc) -> 'SyncIter[T]':
+        """Skip elements where conditional is satisfied
+
+        :return: sync iterable
+        """
+        return self.where(lambda item: not func(item))
 
     def count(self) -> int:
         """Return count of items in iterator
