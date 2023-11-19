@@ -1,13 +1,18 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable, Any, Sequence
+from typing import AsyncIterable, Callable, Iterable, Any, Sequence
 
 import pytest
 
 from tests.utils import to_async_iter
 from iter_model import AsyncIter, async_iter
 from iter_model.async_utils import asyncify
+
+
+async def asyncify_iterable(iterable: Iterable) -> AsyncIterable:
+    for item in iterable:
+        yield item
 
 
 class TestAsyncIter:
@@ -478,6 +483,19 @@ class TestAsyncIter:
         sync_it = AsyncIter.from_sync(it)
         batches = sync_it.batches(batch_size)
         assert await batches.map(tuple).to_tuple() == expected  # type: ignore
+
+    @pytest.mark.parametrize(['it', 'expected'], (
+        ((range(3), range(3, 7)), (0, 1, 2, 3, 4, 5, 6)),
+        ((asyncify_iterable(range(3)), asyncify_iterable(range(3, 7))), (0, 1, 2, 3, 4, 5, 6)),
+    ))
+    async def test_flatten(
+        self,
+        it: Sequence[Iterable[int] | AsyncIterable[int]],
+        expected: tuple[int, ...],
+    ):
+        async_it = AsyncIter.from_sync(it)
+        flat = async_it.flatten()
+        assert await flat.to_tuple() == expected
 
 
 async def test_async_iter():

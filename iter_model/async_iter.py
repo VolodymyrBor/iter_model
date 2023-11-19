@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import operator
 from functools import wraps
 from typing import (
@@ -660,6 +662,28 @@ class AsyncIter(Generic[T]):
             it = self.append_left(item)
             batch = await it.take(batch_size).to_tuple()
             yield batch
+
+    @async_iter
+    async def flatten(
+        self: AsyncIter[Iterable[T] | AsyncIterable[T]],
+    ) -> AsyncIterable[T]:
+        """Return an iterator that flattens one level of nesting
+
+        :return: async iterable of flattened items
+
+        :raise TypeError: if an encountered item is neither an Iterable nor an AsyncIterable
+        """
+        async for iterable in self:
+            if isinstance(iterable, Iterable):
+                for item in iterable:
+                    yield item
+            elif isinstance(iterable, AsyncIterable):
+                async for item in iterable:
+                    yield item
+            else:
+                raise TypeError(
+                    f"Item of type {type(iterable)} is not iterable"
+                )
 
     def __getitem__(self, index: int | slice) -> Awaitable[T] | 'AsyncIter[T]':
         if isinstance(index, slice):
