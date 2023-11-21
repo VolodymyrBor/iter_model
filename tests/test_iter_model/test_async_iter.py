@@ -493,7 +493,7 @@ class TestAsyncIter:
         it: Sequence[Iterable[int] | AsyncIterable[int]],
         expected: tuple[int, ...],
     ):
-        async_it = AsyncIter.from_sync(it)
+        async_it: AsyncIter = AsyncIter.from_sync(it)
         flat = async_it.flatten()
         assert await flat.to_tuple() == expected
 

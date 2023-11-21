@@ -664,9 +664,7 @@ class AsyncIter(Generic[T]):
             yield batch
 
     @async_iter
-    async def flatten(
-        self: AsyncIter[Iterable[T] | AsyncIterable[T]],
-    ) -> AsyncIterable[T]:
+    async def flatten(self) -> AsyncIterable[T]:
         """Return an iterator that flattens one level of nesting
 
         :return: async iterable of flattened items

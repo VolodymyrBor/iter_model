@@ -1,8 +1,6 @@
-from __future__ import annotations
-
+import operator
 import functools
 import itertools
-import operator
 from functools import wraps
 from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
@@ -504,7 +502,7 @@ class SyncIter(Generic[T]):
             batch = it.take(batch_size).to_tuple()
             yield batch
 
-    def flatten(self: SyncIter[Iterable[T]]) -> Iterable[T]:
+    def flatten(self) -> Iterable[T]:
         """Return an iterator that flattens one level of nesting
 
         :return: iterable of flattened items
