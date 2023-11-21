@@ -497,6 +497,14 @@ class TestAsyncIter:
         flat = async_it.flatten()
         assert await flat.to_tuple() == expected
 
+    async def test_flatten_bad_type(self):
+        async_it: AsyncIter = AsyncIter.from_sync((range(3), range(4), 1))
+        async_it = async_it.flatten()
+        assert await async_it.take(3).to_list() == list(range(3))
+        assert await async_it.take(4).to_list() == list(range(4))
+        with pytest.raises(TypeError):
+            await async_it.next()
+
 
 async def test_async_iter():
     r = range(10)
