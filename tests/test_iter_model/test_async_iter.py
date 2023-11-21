@@ -1,13 +1,18 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable, Any, Sequence
+from typing import AsyncIterable, Callable, Iterable, Any, Sequence
 
 import pytest
 
 from tests.utils import to_async_iter
 from iter_model import AsyncIter, async_iter
 from iter_model.async_utils import asyncify
+
+
+async def asyncify_iterable(iterable: Iterable) -> AsyncIterable:
+    for item in iterable:
+        yield item
 
 
 class TestAsyncIter:
@@ -259,11 +264,11 @@ class TestAsyncIter:
 
     async def test_max_default(self):
         default = 'default'
-        assert await AsyncIter.from_sync(tuple()).max(default=default) == default
+        assert await AsyncIter.from_sync(()).max(default=default) == default
 
     async def test_max_empty_error(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).max()
+            await AsyncIter.from_sync(()).max()
 
     @pytest.mark.parametrize(
         ('it', 'key'),
@@ -279,11 +284,11 @@ class TestAsyncIter:
 
     async def test_min_default(self):
         default = 'default'
-        assert await AsyncIter.from_sync(tuple()).min(default=default) == default
+        assert await AsyncIter.from_sync(()).min(default=default) == default
 
     async def test_min_empty_error(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).min()
+            await AsyncIter.from_sync(()).min()
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -301,7 +306,7 @@ class TestAsyncIter:
 
     async def test_reduce_empty(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).reduce(func=operator.add)
+            await AsyncIter.from_sync(()).reduce(func=operator.add)
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -309,7 +314,7 @@ class TestAsyncIter:
             (range(5), operator.add, 1),
             (range(5), operator.sub, -10),
             ((-10, 10), operator.mul, 20),
-            (tuple(), operator.mul, None),  # empty
+            ((), operator.mul, None),  # empty
         ),
     )
     async def test_accumulate(self, it: Iterable, func: Callable, initial: int):
@@ -467,7 +472,7 @@ class TestAsyncIter:
         (tuple(range(9)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8))),
         (tuple(range(1)), 3, ((0, ), ), ),
         (tuple(range(6)), 4, ((0, 1, 2, 3), (4, 5))),
-        (tuple(range(0)), 100, tuple()),
+        (tuple(range(0)), 100, ()),
     ))
     async def test_batches(
         self,
@@ -478,6 +483,27 @@ class TestAsyncIter:
         sync_it = AsyncIter.from_sync(it)
         batches = sync_it.batches(batch_size)
         assert await batches.map(tuple).to_tuple() == expected  # type: ignore
+
+    @pytest.mark.parametrize(['it', 'expected'], (
+        ((range(3), range(3, 7)), (0, 1, 2, 3, 4, 5, 6)),
+        ((asyncify_iterable(range(3)), asyncify_iterable(range(3, 7))), (0, 1, 2, 3, 4, 5, 6)),
+    ))
+    async def test_flatten(
+        self,
+        it: Sequence[Iterable[int] | AsyncIterable[int]],
+        expected: tuple[int, ...],
+    ):
+        async_it: AsyncIter = AsyncIter.from_sync(it)
+        flat = async_it.flatten()
+        assert await flat.to_tuple() == expected
+
+    async def test_flatten_bad_type(self):
+        async_it: AsyncIter = AsyncIter.from_sync((range(3), range(4), 1))
+        async_it = async_it.flatten()
+        assert await async_it.take(3).to_list() == list(range(3))
+        assert await async_it.take(4).to_list() == list(range(4))
+        with pytest.raises(TypeError):
+            await async_it.next()
 
 
 async def test_async_iter():

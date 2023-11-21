@@ -1,6 +1,6 @@
+import operator
 import functools
 import itertools
-import operator
 from functools import wraps
 from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
 
@@ -208,8 +208,8 @@ class SyncIter(Generic[T]):
         """
         try:
             return next(self)
-        except StopIteration:
-            raise StopIteration('Iterable is empty')
+        except StopIteration as err:
+            raise StopIteration('Iterable is empty') from err
 
     def last(self) -> T:
         """Return the last item
@@ -319,8 +319,8 @@ class SyncIter(Generic[T]):
         if initial is _EMPTY:
             try:
                 return functools.reduce(func, self)
-            except TypeError:
-                raise ValueError('Iterator is empty')
+            except TypeError as err:
+                raise ValueError('Iterator is empty') from err
         else:
             return functools.reduce(func, self, initial)
 
@@ -501,6 +501,15 @@ class SyncIter(Generic[T]):
             it = self.append_left(item)
             batch = it.take(batch_size).to_tuple()
             yield batch
+
+    def flatten(self) -> Iterable[T]:
+        """Return an iterator that flattens one level of nesting
+
+        :return: iterable of flattened items
+
+        :raise TypeError: if an encountered item is not an Iterable
+        """
+        return SyncIter(itertools.chain.from_iterable(self))
 
     def __len__(self) -> int:
         return self.get_len()

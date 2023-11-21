@@ -60,7 +60,7 @@ jobs:
           poetry config virtualenvs.in-project true
           poetry install --no-interaction
       - name: Run tests
-        run: make test-itself
+        run: make run_linters_and_tests
       - name: Build
         run: poetry build
       - name: Release Notes

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import operator
 from typing import (
     TypeVar,
@@ -127,7 +129,7 @@ class AsyncIter(Generic[T]):
     def zip_longest(
         self,
         *iterables: AsyncIterable[T],
-        fillvalue: R = None,
+        fillvalue: R | None = None,
     ) -> AsyncIter[list[T | R]]: ...
 
     def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIter[T]: ...
@@ -145,6 +147,8 @@ class AsyncIter(Generic[T]):
     async def get_len(self) -> int: ...
 
     def batches(self, batch_size: int) -> AsyncIter[tuple[T, ...]]: ...
+
+    def flatten(self) -> AsyncIter[T]: ...
 
     @overload
     def __getitem__(self, index: int) -> Awaitable[T]: ...
