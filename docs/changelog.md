@@ -1,7 +1,13 @@
 ### [2.3.0] (2023-11-21)
 
 ✨ New features:
-   * Added new method: `flatten()`
+
+* Added new method: `flatten()`
+
+⚙️ Internal changes:
+
+* update [pyproject.toml](pyproject.toml) to latest poetry version
+* use ruff as main code linter instated of flake8
 
 ---
 
