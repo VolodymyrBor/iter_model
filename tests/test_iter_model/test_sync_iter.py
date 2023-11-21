@@ -248,11 +248,11 @@ class TestSyncIter:
 
     def test_max_default(self):
         default = 'default'
-        assert SyncIter(tuple()).max(default=default) == default
+        assert SyncIter(()).max(default=default) == default
 
     def test_max_empty_error(self):
         with pytest.raises(ValueError):
-            SyncIter(tuple()).max()
+            SyncIter(()).max()
 
     @pytest.mark.parametrize(
         ('it', 'key'),
@@ -267,11 +267,11 @@ class TestSyncIter:
 
     def test_min_default(self):
         default = 'default'
-        assert SyncIter(tuple()).min(default=default) == default
+        assert SyncIter(()).min(default=default) == default
 
     def test_min_empty_error(self):
         with pytest.raises(ValueError):
-            SyncIter(tuple()).min()
+            SyncIter(()).min()
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -286,7 +286,7 @@ class TestSyncIter:
 
     def test_reduce_empty(self):
         with pytest.raises(ValueError):
-            SyncIter(tuple()).reduce(func=operator.add)
+            SyncIter(()).reduce(func=operator.add)
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -294,7 +294,7 @@ class TestSyncIter:
             (range(5), operator.add, 1),
             (range(5), operator.sub, -10),
             ((-10, 10), operator.mul, 20),
-            (tuple(), operator.mul, None),  # empty
+            ((), operator.mul, None),  # empty
         ),
     )
     def test_accumulate(self, it: Iterable, func: Callable, initial: int):
@@ -466,7 +466,7 @@ class TestSyncIter:
         (tuple(range(9)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8))),
         (tuple(range(1)), 3, ((0, ), ), ),
         (tuple(range(6)), 4, ((0, 1, 2, 3), (4, 5))),
-        (tuple(range(0)), 100, tuple()),
+        (tuple(range(0)), 100, ()),
     ))
     def test_batches(
         self,

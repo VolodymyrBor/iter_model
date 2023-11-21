@@ -264,11 +264,11 @@ class TestAsyncIter:
 
     async def test_max_default(self):
         default = 'default'
-        assert await AsyncIter.from_sync(tuple()).max(default=default) == default
+        assert await AsyncIter.from_sync(()).max(default=default) == default
 
     async def test_max_empty_error(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).max()
+            await AsyncIter.from_sync(()).max()
 
     @pytest.mark.parametrize(
         ('it', 'key'),
@@ -284,11 +284,11 @@ class TestAsyncIter:
 
     async def test_min_default(self):
         default = 'default'
-        assert await AsyncIter.from_sync(tuple()).min(default=default) == default
+        assert await AsyncIter.from_sync(()).min(default=default) == default
 
     async def test_min_empty_error(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).min()
+            await AsyncIter.from_sync(()).min()
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -306,7 +306,7 @@ class TestAsyncIter:
 
     async def test_reduce_empty(self):
         with pytest.raises(ValueError):
-            await AsyncIter.from_sync(tuple()).reduce(func=operator.add)
+            await AsyncIter.from_sync(()).reduce(func=operator.add)
 
     @pytest.mark.parametrize(
         ('it', 'func', 'initial'),
@@ -314,7 +314,7 @@ class TestAsyncIter:
             (range(5), operator.add, 1),
             (range(5), operator.sub, -10),
             ((-10, 10), operator.mul, 20),
-            (tuple(), operator.mul, None),  # empty
+            ((), operator.mul, None),  # empty
         ),
     )
     async def test_accumulate(self, it: Iterable, func: Callable, initial: int):
@@ -472,7 +472,7 @@ class TestAsyncIter:
         (tuple(range(9)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8))),
         (tuple(range(1)), 3, ((0, ), ), ),
         (tuple(range(6)), 4, ((0, 1, 2, 3), (4, 5))),
-        (tuple(range(0)), 100, tuple()),
+        (tuple(range(0)), 100, ()),
     ))
     async def test_batches(
         self,

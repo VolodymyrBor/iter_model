@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import operator
 from functools import wraps
 from typing import (
@@ -100,7 +98,7 @@ class AsyncIter(Generic[T]):
 
         :return: set of items
         """
-        return set([item async for item in self])
+        return {item async for item in self}
 
     @async_iter
     async def enumerate(self, start: int = 0) -> 'AsyncIter[tuple[int, T]]':
@@ -269,8 +267,8 @@ class AsyncIter(Generic[T]):
         """
         try:
             return await anext(self)
-        except StopAsyncIteration:
-            raise StopAsyncIteration('Iterable is empty')
+        except StopAsyncIteration as err:
+            raise StopAsyncIteration('Iterable is empty') from err
 
     async def last(self) -> T:
         """Returns the last item
@@ -393,8 +391,8 @@ class AsyncIter(Generic[T]):
         if initial is _EMPTY:
             try:
                 initial = await self.next()
-            except StopAsyncIteration:
-                raise ValueError('Iterator is empty')
+            except StopAsyncIteration as err:
+                raise ValueError('Iterator is empty') from err
 
         func = asyncify(func)
         async for item in self:
@@ -417,9 +415,9 @@ class AsyncIter(Generic[T]):
         """
         try:
             max_item = await self.next()
-        except StopAsyncIteration:
+        except StopAsyncIteration as err:
             if default is _EMPTY:
-                raise ValueError('Iterator is empty')
+                raise ValueError('Iterator is empty') from err
             else:
                 return default
         key = asyncify(key if key else lambda x: x)
@@ -447,9 +445,9 @@ class AsyncIter(Generic[T]):
         """
         try:
             max_item = await self.next()
-        except StopAsyncIteration:
+        except StopAsyncIteration as err:
             if default is _EMPTY:
-                raise ValueError('Iterator is empty')
+                raise ValueError('Iterator is empty') from err
             else:
                 return default
         key = asyncify(key if key else lambda x: x)

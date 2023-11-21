@@ -129,7 +129,7 @@ class AsyncIter(Generic[T]):
     def zip_longest(
         self,
         *iterables: AsyncIterable[T],
-        fillvalue: R = None,
+        fillvalue: R | None = None,
     ) -> AsyncIter[list[T | R]]: ...
 
     def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIter[T]: ...
