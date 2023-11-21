@@ -478,6 +478,18 @@ class TestSyncIter:
         batches = sync_it.batches(batch_size)
         assert batches.map(tuple).to_tuple() == expected  # type: ignore
 
+    @pytest.mark.parametrize(['it', 'expected'], (
+        ((range(3), range(3, 7)), (0, 1, 2, 3, 4, 5, 6)),
+    ))
+    def test_flatten(
+        self,
+        it: Sequence[Iterable[int]],
+        expected: tuple[int, ...],
+    ):
+        sync_it = SyncIter(it)
+        flat = sync_it.flatten()
+        assert flat.to_tuple() == expected
+
 
 def test_sync_iter():
     r = range(10)

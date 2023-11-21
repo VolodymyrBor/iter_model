@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import functools
 import itertools
 import operator
@@ -501,6 +503,15 @@ class SyncIter(Generic[T]):
             it = self.append_left(item)
             batch = it.take(batch_size).to_tuple()
             yield batch
+
+    def flatten(self: SyncIter[Iterable[T]]) -> Iterable[T]:
+        """Return an iterator that flattens one level of nesting
+
+        :return: iterable of flattened items
+
+        :raise TypeError: if an encountered item is not an Iterable
+        """
+        return SyncIter(itertools.chain.from_iterable(self))
 
     def __len__(self) -> int:
         return self.get_len()

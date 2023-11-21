@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import operator
 from typing import Generic, TypeVar, ParamSpec, TypeAlias, Callable, Awaitable, Iterable, Iterator, overload
 
@@ -122,6 +124,8 @@ class SyncIter(Generic[T]):
     def get_len(self) -> int: ...
 
     def batches(self, batch_size: int) -> SyncIter[tuple[T, ...]]: ...
+
+    def flatten(self: SyncIter[Iterable[T]]) -> SyncIter[T]: ...
 
     def __len__(self) -> int: ...
 

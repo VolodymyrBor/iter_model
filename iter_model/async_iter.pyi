@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import operator
 from typing import (
     TypeVar,
@@ -145,6 +147,8 @@ class AsyncIter(Generic[T]):
     async def get_len(self) -> int: ...
 
     def batches(self, batch_size: int) -> AsyncIter[tuple[T, ...]]: ...
+
+    def flatten(self: AsyncIter[Iterable[T]]) -> AsyncIter[T]: ...
 
     @overload
     def __getitem__(self, index: int) -> Awaitable[T]: ...
