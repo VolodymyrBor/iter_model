@@ -12,8 +12,8 @@
 <a href="https://pypi.org/project/iter_model" target="_blank">
     <img src="https://img.shields.io/pypi/v/iter_model?color=%2334D058&label=pypi%20package" alt="Package version">
 </a>
-<a href="https://github.com/VolodymyrBor/iter_model/actions?query=workflow%3ATest+event%3Apush+branch%3Amaster" target="_blank">
-    <img src="https://github.com/VolodymyrBor/iter_model/workflows/Test/badge.svg?event=push&branch=master" alt="Test">
+<a href="https://github.com/VolodymyrBor/iter_model/actions/workflows/build.yml?branch=master" target="_blank">
+    <img src="https://github.com/VolodymyrBor/iter_model/actions/workflows/build.yml/badge.svg?branch=master" alt="Test">
 </a>
 
 [![Supported Versions](https://img.shields.io/badge/coverage-100%25-green)](https://shields.io/)

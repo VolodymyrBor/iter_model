@@ -8,6 +8,7 @@
 
 * update [pyproject.toml](pyproject.toml) to latest poetry version
 * use ruff as main code linter instated of flake8
+* update mkdocs-material
 
 ---
 

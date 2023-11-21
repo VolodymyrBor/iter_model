@@ -8,7 +8,6 @@ theme:
 
 plugins:
   - mkdocstrings:
-      custom_templates: templates
       default_handler: python
       handlers:
         python:
