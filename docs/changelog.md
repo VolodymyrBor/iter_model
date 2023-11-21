@@ -1,3 +1,10 @@
+### [2.3.0] (2023-11-21)
+
+✨ New features:
+   * Added new method: `flatten()`
+
+---
+
 ### [2.2.0] (2022-11-25)
 
 ✨ New features:
@@ -157,3 +164,4 @@
 [2.0.0]: https://github.com/VolodymyrBor/iter_model/pull/20
 [2.1.0]: https://github.com/VolodymyrBor/iter_model/pull/24
 [2.2.0]: https://github.com/VolodymyrBor/iter_model/pull/26
+[2.3.0]: https://github.com/VolodymyrBor/iter_model/pull/29
