@@ -1,3 +1,9 @@
+### [2.3.2] (2024-04-12)
+
+Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
+
+---
+
 ### [2.3.1] (2024-04-12)
 
 ✨ New features:
