@@ -488,13 +488,14 @@ class TestAsyncIter:
 
     @pytest.mark.parametrize(['it', 'expected'], (
         ((range(3), range(3, 7)), (0, 1, 2, 3, 4, 5, 6)),
+        ((asyncify_iterable(range(3)), asyncify_iterable(range(3, 7))), (0, 1, 2, 3, 4, 5, 6)),
     ))
     async def test_flatten(
         self,
-        it: tuple[range],
+        it: tuple[range | AsyncIter[int]],
         expected: tuple[int, ...],
     ):
-        async_it: AsyncIter[tuple[range]] = AsyncIter.from_sync(it)  # type: ignore
+        async_it: AsyncIter = AsyncIter.from_sync(it)  # type: ignore
         assert await async_it.flatten().to_tuple() == expected  # type: ignore
 
     async def test_flatten_bad_type(self):
