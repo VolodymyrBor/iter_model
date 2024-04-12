@@ -1,17 +1,16 @@
 from .async_utils import asyncify as asyncify
 from .empty_iterator import EmptyAsyncIterator as EmptyAsyncIterator
-from _typeshed import Incomplete
 from typing import AsyncIterable, AsyncIterator, Awaitable, Callable, Generic, Iterable, ParamSpec, TypeVar
 
 T = TypeVar('T')
 R = TypeVar('R')
 P = ParamSpec('P')
 DefaultT = TypeVar('DefaultT')
-KeyFunc: Incomplete
-BinaryFunc: Incomplete
-ConditionFunc: Incomplete
+KeyFunc = Callable[[T], R | Awaitable[R]]
+BinaryFunc = Callable[[T, T], R | Awaitable[R]]
+ConditionFunc = Callable[[T], bool | Awaitable[bool]]
 
-def async_iter(func: Callable[P, AsyncIterable[T]]) -> Callable[P, 'AsyncIter[T]']: ...
+def async_iter(func: Callable[P, AsyncIterable[T]]) -> Callable[P, AsyncIter[T]]: ...
 
 class AsyncIter(Generic[T]):
     def __init__(self, it: AsyncIterable[T]) -> None: ...
