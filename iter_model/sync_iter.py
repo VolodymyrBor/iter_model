@@ -17,7 +17,7 @@ ConditionFunc = Callable[[T], bool]
 _EMPTY = object()
 
 
-def sync_iter(func: Callable[P, Iterable[T]]) -> Callable[P, 'SyncIter[T]']:
+def sync_iter(func: Callable[P, Iterator[T]]) -> Callable[P, 'SyncIter[T]']:
     """Convert result of the func to SyncIter
 
     Usage:
@@ -254,7 +254,7 @@ class SyncIter(Generic[T]):
         return self.next()
 
     @sync_iter
-    def mark_first(self) -> 'SyncIter[tuple[T, bool]]':
+    def mark_first(self) -> Iterator[tuple[T, bool]]:
         """Mark first item.
 
         :return: Yields: tuple[item, is_first]
@@ -268,7 +268,7 @@ class SyncIter(Generic[T]):
         yield from self.map(lambda item: (item, False))
 
     @sync_iter
-    def mark_last(self) -> 'SyncIter[tuple[T, bool]]':
+    def mark_last(self) -> Iterator[tuple[T, bool]]:
         """Mark last item
 
         :return: Yields: tuple[item, is_last]
@@ -284,7 +284,7 @@ class SyncIter(Generic[T]):
         yield previous_item, True
 
     @sync_iter
-    def mark_first_last(self) -> 'SyncIter[tuple[T, bool, bool]]':
+    def mark_first_last(self) -> Iterator[tuple[T, bool, bool]]:
         """Mark first and last item
 
         :return: Yields: tuple[item, is_first, is_last]
@@ -373,7 +373,7 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.accumulate(self, func=func, initial=initial))
 
     @sync_iter
-    def append_left(self, item: T) -> 'SyncIter[T]':
+    def append_left(self, item: T) -> Iterator[T]:
         """Append an item to left of the iterable (start)
 
          :return: iterable
@@ -382,7 +382,7 @@ class SyncIter(Generic[T]):
         yield from self
 
     @sync_iter
-    def append_right(self, item: T) -> 'SyncIter[T]':
+    def append_right(self, item: T) -> Iterator[T]:
         """Append an item to right of the iterable (end)
 
          :return: iterable
@@ -391,7 +391,7 @@ class SyncIter(Generic[T]):
         yield item
 
     @sync_iter
-    def append_at(self, index: int, item: T) -> 'SyncIter[T]':
+    def append_at(self, index: int, item: T) -> Iterator[T]:
         """Append at the position in to the iterable
 
          :return: iterable
@@ -488,7 +488,7 @@ class SyncIter(Generic[T]):
         return count
 
     @sync_iter
-    def batches(self, batch_size: int) -> 'SyncIter[tuple[T, ...]]':
+    def batches(self, batch_size: int) -> Iterator[tuple[T, ...]]:
         """Create iterable of tuples whose length = batch_size
 
         :return: iterable of tuples whose length = batch_size
@@ -502,7 +502,7 @@ class SyncIter(Generic[T]):
             batch = it.take(batch_size).to_tuple()
             yield batch
 
-    def flatten(self) -> Iterable[T]:
+    def flatten(self: 'SyncIter[Iterator[T]]') -> 'SyncIter[T]':
         """Return an iterator that flattens one level of nesting
 
         :return: iterable of flattened items
