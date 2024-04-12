@@ -428,7 +428,8 @@ class TestAsyncIter:
 
     @pytest.mark.parametrize('items', ([], range(1), range(2), range(3), range(5)))
     async def test_pairwise(self, items: Sequence[int]):
-        assert await AsyncIter.from_sync(items).pairwise().to_list() == list(itertools.pairwise(items))
+        it: AsyncIter[int] = AsyncIter.from_sync(items)
+        assert await it.pairwise().to_list() == list(itertools.pairwise(items))
 
     @pytest.mark.parametrize('items', ([], range(1), range(2)))
     async def test_get_len(self, items: Sequence[int]):
@@ -447,7 +448,8 @@ class TestAsyncIter:
     ))
     async def test_getitem_dander_method_slice(self, slice_: slice):
         r = range(10)
-        assert await AsyncIter.from_sync(r)[slice_].to_list() == list(r)[slice_]
+        it: AsyncIter[int] = AsyncIter.from_sync(r)
+        assert await it[slice_].to_list() == list(r)[slice_]
 
     @pytest.mark.parametrize('index', (
         0, 1, 5,
@@ -490,12 +492,11 @@ class TestAsyncIter:
     ))
     async def test_flatten(
         self,
-        it: Sequence[Iterable[int] | AsyncIterable[int]],
+        it: tuple[range | AsyncIter[int]],
         expected: tuple[int, ...],
     ):
-        async_it: AsyncIter = AsyncIter.from_sync(it)
-        flat = async_it.flatten()
-        assert await flat.to_tuple() == expected
+        async_it: AsyncIter = AsyncIter.from_sync(it)  # type: ignore
+        assert await async_it.flatten().to_tuple() == expected  # type: ignore
 
     async def test_flatten_bad_type(self):
         async_it: AsyncIter = AsyncIter.from_sync((range(3), range(4), 1))
