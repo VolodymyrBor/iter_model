@@ -2,7 +2,7 @@ import operator
 import functools
 import itertools
 from functools import wraps
-from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, TypeAlias, Iterator
+from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, Iterator
 
 from .empty_iterator import EmptyIterator
 
@@ -11,9 +11,9 @@ R = TypeVar('R')
 P = ParamSpec('P')
 DefaultT = TypeVar('DefaultT')
 
-KeyFunc: TypeAlias = Callable[[T], R]
-BinaryFunc: TypeAlias = Callable[[T, T], T]
-ConditionFunc: TypeAlias = Callable[[T], bool]
+KeyFunc = Callable[[T], R]
+BinaryFunc = Callable[[T, T], T]
+ConditionFunc = Callable[[T], bool]
 _EMPTY = object()
 
 

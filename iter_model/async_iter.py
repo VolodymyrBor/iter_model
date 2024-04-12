@@ -7,7 +7,6 @@ from typing import (
     Iterable,
     ParamSpec,
     Awaitable,
-    TypeAlias,
     AsyncIterable,
     AsyncIterator, cast,
 )
@@ -19,9 +18,9 @@ T = TypeVar('T')
 R = TypeVar('R')
 P = ParamSpec('P')
 DefaultT = TypeVar('DefaultT')
-KeyFunc: TypeAlias = Callable[[T], R | Awaitable[R]]
-BinaryFunc: TypeAlias = Callable[[T, T], R | Awaitable[R]]
-ConditionFunc: TypeAlias = Callable[[T], bool | Awaitable[bool]]
+KeyFunc = Callable[[T], R | Awaitable[R]]
+BinaryFunc = Callable[[T, T], R | Awaitable[R]]
+ConditionFunc = Callable[[T], bool | Awaitable[bool]]
 
 _EMPTY = object()
 

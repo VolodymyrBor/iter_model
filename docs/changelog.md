@@ -1,3 +1,11 @@
+### [2.3.1] (2024-04-12)
+
+✨ New features:
+
+* Added mypy stubs
+
+---
+
 ### [2.3.0] (2023-11-21)
 
 ✨ New features:
