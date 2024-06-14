@@ -1,10 +1,10 @@
 from typing import Iterable, AsyncIterable, TypeVar, ParamSpec
 
-T = TypeVar('_T')
-R = TypeVar('_R')
-P = ParamSpec('_P')
+_T = TypeVar('_T')
+_R = TypeVar('_R')
+_P = ParamSpec('_P')
 
 
-async def to_async_iter(it: Iterable[T]) -> AsyncIterable[T]:
+async def to_async_iter(it: Iterable[_T]) -> AsyncIterable[_T]:
     for item in it:
         yield item

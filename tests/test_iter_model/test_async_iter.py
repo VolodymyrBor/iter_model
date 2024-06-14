@@ -454,6 +454,9 @@ class TestAsyncIter:
         it = AsyncIter.empty()
         assert await it.is_empty()
 
+    async def test_not_empty(self):
+        assert not await AsyncIter.from_sync(range(5)).is_empty()
+
     @pytest.mark.parametrize(['it', 'batch_size', 'expected'], (
         (tuple(range(10)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8), (9, ))),
         (tuple(range(9)), 3, ((0, 1, 2), (3, 4, 5), (6, 7, 8))),

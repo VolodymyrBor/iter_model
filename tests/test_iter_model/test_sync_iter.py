@@ -405,6 +405,9 @@ class TestSyncIter:
     def test_is_empty(self):
         assert SyncIter.empty().is_empty()
 
+    def test_is_not_empty(self):
+        assert not SyncIter(range(5)).empty()
+
     @pytest.mark.parametrize('items', ([], range(1), range(2), range(3), range(5)))
     def test_pairwise(self, items: Sequence[int]):
         assert SyncIter(items).pairwise().to_list() == list(itertools.pairwise(items))
