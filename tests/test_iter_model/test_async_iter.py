@@ -171,14 +171,6 @@ class TestAsyncIter:
     async def test_take_while(self, items: list[int], condition: Callable, result: list[int]):
         assert await AsyncIter(to_async_iter(items)).take_while(condition).to_list() == result
 
-    async def test_first(self):
-        items = [4, 2, 3]
-        assert await AsyncIter.from_sync(items).first() == items[0]
-
-    async def test_first_err(self):
-        with pytest.raises(StopAsyncIteration):
-            assert await AsyncIter.empty().first()
-
     async def test_last(self):
         items = [4, 2, 3]
         assert await AsyncIter.from_sync(items).last() == items[-1]
@@ -215,7 +207,7 @@ class TestAsyncIter:
     async def test_next(self):
         it1 = AsyncIter.from_sync(range(5))
         it2 = AsyncIter.from_sync(range(5))
-        assert await it1.next() == await it2.first()
+        assert await it1.next() == await anext(it2)
 
     async def test_next_empty(self):
         with pytest.raises(StopAsyncIteration):
@@ -423,17 +415,10 @@ class TestAsyncIter:
     async def test_is_empty(self):
         assert await AsyncIter.empty().is_empty()
 
-    async def test_is_not_empty(self):
-        assert await AsyncIter.from_sync([1]).is_not_empty()
-
     @pytest.mark.parametrize('items', ([], range(1), range(2), range(3), range(5)))
     async def test_pairwise(self, items: Sequence[int]):
         it: AsyncIter[int] = AsyncIter.from_sync(items)
         assert await it.pairwise().to_list() == list(itertools.pairwise(items))
-
-    @pytest.mark.parametrize('items', ([], range(1), range(2)))
-    async def test_get_len(self, items: Sequence[int]):
-        assert await AsyncIter.from_sync(items).get_len() == len(items)
 
     @pytest.mark.parametrize('slice_', (
         slice(None),

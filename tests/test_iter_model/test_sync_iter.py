@@ -155,14 +155,6 @@ class TestSyncIter:
     def test_take_while(self, items: list[int], condition: Callable, result: list[int]):
         assert SyncIter(items).take_while(condition).to_list() == result
 
-    def test_first(self):
-        items = [4, 2, 3]
-        assert SyncIter(items).first() == items[0]
-
-    def test_first_err(self):
-        with pytest.raises(StopIteration):
-            assert SyncIter.empty().first()
-
     def test_last(self):
         items = [4, 2, 3]
         assert SyncIter(items).last() == items[-1]
@@ -199,7 +191,7 @@ class TestSyncIter:
     def test_next(self):
         it1 = SyncIter(range(5))
         it2 = SyncIter(range(5))
-        assert it1.next() == it2.first()
+        assert it1.next() == next(it2)
 
     def test_next_empty(self):
         with pytest.raises(StopIteration):
@@ -347,7 +339,7 @@ class TestSyncIter:
         ),
     )
     def test_get_slice(self, iterable: Iterable, slice_: slice):
-        assert SyncIter(iterable).get_slice(
+        assert SyncIter(iterable).islice(
             start=slice_.start,
             stop=slice_.stop,
             step=slice_.step,
@@ -413,16 +405,9 @@ class TestSyncIter:
     def test_is_empty(self):
         assert SyncIter.empty().is_empty()
 
-    def test_is_not_empty(self):
-        assert SyncIter([1]).is_not_empty()
-
     @pytest.mark.parametrize('items', ([], range(1), range(2), range(3), range(5)))
     def test_pairwise(self, items: Sequence[int]):
         assert SyncIter(items).pairwise().to_list() == list(itertools.pairwise(items))
-
-    @pytest.mark.parametrize('items', ([], range(1), range(2)))
-    def test_get_len(self, items: Sequence[int]):
-        assert SyncIter(items).get_len() == len(items)
 
     @pytest.mark.parametrize('items', ([], range(1), range(2)))
     def test_get_len_dander_method(self, items: Sequence[int]):
@@ -455,7 +440,7 @@ class TestSyncIter:
     ))
     def test_getitem_dander_method_exception(self, index: int):
         with pytest.raises(IndexError):
-            SyncIter(range(5))[index]
+            _ = SyncIter(range(5))[index]
 
     def test_empty(self):
         it = SyncIter.empty()
