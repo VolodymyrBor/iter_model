@@ -317,13 +317,6 @@ class AsyncIter(Generic[_T]):
                 return True
         return False
 
-    async def first(self) -> _T:
-        """Returns first item
-
-        :return: first item
-        """
-        return await self.next()
-
     @async_iter
     async def mark_first(self) -> AsyncIterator[tuple[_T, bool]]:
         """Mark first item
@@ -467,7 +460,7 @@ class AsyncIter(Generic[_T]):
     ) -> AsyncIterator[_R]:
         """Return series of accumulated sums (by default).
 
-        :param func: func[accumulated value, next value], by default operator.add
+        :param func: func[accumulated value, next value], by default operator.add()
         :param initial: initial value of series
 
         :return: iterable
@@ -573,7 +566,7 @@ class AsyncIter(Generic[_T]):
             yield batch
 
     @async_iter
-    async def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIterator[_T]:
+    async def islice(self, start: int = 0, stop: int | None = None, step: int = 1) -> AsyncIterator[_T]:
         """Return slice from the iterable
 
         :return: iterable
@@ -615,13 +608,6 @@ class AsyncIter(Generic[_T]):
             return True
         return False
 
-    async def is_not_empty(self) -> bool:
-        """Return True if iterable is not empty
-
-        :return: True if iterable is not empty
-        """
-        return not await self.is_empty()
-
     @async_iter
     async def pairwise(self) -> AsyncIterator[tuple[_T, _T]]:
         """Return an iterable of overlapping pairs
@@ -635,16 +621,6 @@ class AsyncIter(Generic[_T]):
         async for item in self:
             yield previous, item
             previous = item
-
-    async def get_len(self) -> int:
-        """Return len of iterable
-
-        :return: length
-        """
-        count = 0
-        async for _ in self:
-            count += 1
-        return count
 
     @async_iter
     async def batches(self, batch_size: int) -> AsyncIterator[tuple[_T, ...]]:
@@ -683,7 +659,7 @@ class AsyncIter(Generic[_T]):
 
     def __getitem__(self, index: int | slice) -> Awaitable[_T] | 'AsyncIter[_T]':
         if isinstance(index, slice):
-            return self.get_slice(
+            return self.islice(
                 start=index.start or 0,
                 stop=index.stop or None,
                 step=index.step or 1,
