@@ -6,10 +6,10 @@ from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, Iterator
 
 from .empty_iterator import EmptyIterator
 
-T = TypeVar('T')
-R = TypeVar('R')
-P = ParamSpec('P')
-DefaultT = TypeVar('DefaultT')
+T = TypeVar('_T')
+R = TypeVar('_R')
+P = ParamSpec('_P')
+DefaultT = TypeVar('_DefaultT')
 
 KeyFunc = Callable[[T], R]
 BinaryFunc = Callable[[T, T], T]
@@ -17,7 +17,7 @@ ConditionFunc = Callable[[T], bool]
 _EMPTY = object()
 
 
-def sync_iter(func: Callable[P, Iterator[T]]) -> Callable[P, 'SyncIter[T]']:
+def sync_iter(func: Callable[P, Iterator[T]]) -> Callable[P, 'SyncIter[_T]']:
     """Convert result of the func to SyncIter
 
     Usage:
@@ -32,7 +32,7 @@ def sync_iter(func: Callable[P, Iterator[T]]) -> Callable[P, 'SyncIter[T]']:
     :return: new function
     """
     @wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> 'SyncIter[T]':
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> 'SyncIter[_T]':
         return SyncIter(func(*args, **kwargs))
     return wrapper
 
@@ -51,7 +51,7 @@ class SyncIter(Generic[T]):
         return next(self._it)
 
     @classmethod
-    def empty(cls) -> 'SyncIter[T]':
+    def empty(cls) -> 'SyncIter[_T]':
         """Create empty iterable
 
         :return: empty iterable
@@ -79,7 +79,7 @@ class SyncIter(Generic[T]):
         """
         return set(self._it)
 
-    def enumerate(self, start: int = 0) -> 'SyncIter[tuple[int, T]]':
+    def enumerate(self, start: int = 0) -> 'SyncIter[tuple[int, _T]]':
         """Returns a tuple containing a count (from start which defaults to 0)
         and the values obtained from iterating over self.
 
@@ -88,14 +88,14 @@ class SyncIter(Generic[T]):
         """
         return SyncIter(enumerate(self, start=start))
 
-    def take(self, count: int) -> 'SyncIter[T]':
+    def take(self, count: int) -> 'SyncIter[_T]':
         """Take 'count' items from iterator
 
         :return: iterable that contains 'count' items
         """
         return SyncIter(itertools.islice(self, count))
 
-    def map(self, func: Callable[[T], R]) -> 'SyncIter[R]':
+    def map(self, func: Callable[[T], R]) -> 'SyncIter[_R]':
         """Return an iterator that applies function to every item of iterable,
          yielding the results
 
@@ -104,7 +104,7 @@ class SyncIter(Generic[T]):
         return SyncIter(map(func, self))
 
     @sync_iter
-    def skip(self, count: int) -> 'SyncIter[T]':
+    def skip(self, count: int) -> 'SyncIter[_T]':
         """Skip 'count' items from iterator
 
         :return: async iterable
@@ -113,14 +113,14 @@ class SyncIter(Generic[T]):
             if index >= count:
                 yield item
 
-    def skip_while(self, func: ConditionFunc) -> 'SyncIter[T]':
+    def skip_while(self, func: ConditionFunc) -> 'SyncIter[_T]':
         """Skips leading elements while conditional is satisfied
 
         :return: sync iterable
         """
         return SyncIter(itertools.dropwhile(func, self))
 
-    def skip_where(self, func: ConditionFunc) -> 'SyncIter[T]':
+    def skip_where(self, func: ConditionFunc) -> 'SyncIter[_T]':
         """Skip elements where conditional is satisfied
 
         :return: sync iterable
@@ -187,14 +187,14 @@ class SyncIter(Generic[T]):
 
         raise ValueError('Item not found')
 
-    def where(self, func: ConditionFunc) -> 'SyncIter[T]':
+    def where(self, func: ConditionFunc) -> 'SyncIter[_T]':
         """Filter items by condition
 
         :return: iterable
         """
         return SyncIter(filter(func, self))
 
-    def take_while(self, func: ConditionFunc) -> 'SyncIter[T]':
+    def take_while(self, func: ConditionFunc) -> 'SyncIter[_T]':
         """Take items while the conditional is satisfied
 
         :return: iterable
@@ -225,7 +225,7 @@ class SyncIter(Generic[T]):
 
         return last_item
 
-    def chain(self, *iterables: Iterable[T]) -> 'SyncIter[T]':
+    def chain(self, *iterables: Iterable[T]) -> 'SyncIter[_T]':
         """Chain with other iterables
 
         :return: iterable
@@ -355,7 +355,7 @@ class SyncIter(Generic[T]):
         else:
             return min(self, key=key, default=default)
 
-    def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[T]':
+    def accumulate(self, func: BinaryFunc = operator.add, initial: T | None = None) -> 'SyncIter[_T]':
         """Return series of accumulated sums (by default).
 
         :param func: func[accumulated value, next value], by default operator.add
@@ -397,7 +397,7 @@ class SyncIter(Generic[T]):
         if index > i:
             yield item
 
-    def zip(self, *iterables: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[T, ...]]':
+    def zip(self, *iterables: Iterable[T], strict: bool = False) -> 'SyncIter[tuple[_T, ...]]':
         """The zip object yields n-length tuples, where n is the number of iterables
         passed as positional arguments to zip().  The i-th element in every tuple
         comes from the i-th iterable argument to zip().  This continues until the
@@ -409,7 +409,7 @@ class SyncIter(Generic[T]):
         """
         return SyncIter(zip(self, *iterables, strict=strict))
 
-    def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> 'SyncIter[tuple[T | R, ...]]':
+    def zip_longest(self, *iterables: Iterable[T], fillvalue: R = None) -> 'SyncIter[tuple[_T | _R, ...]]':
         """The zip object yields n-length tuples, where n is the number of iterables
         passed as positional arguments to zip().  The i-th element in every tuple
         comes from the i-th iterable argument to zip().  This continues until the
@@ -421,7 +421,7 @@ class SyncIter(Generic[T]):
         """
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
 
-    def islice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+    def islice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[_T]':
         """Return slice from the iterable
 
         :return: iterable
@@ -456,7 +456,7 @@ class SyncIter(Generic[T]):
             return True
         return False
 
-    def pairwise(self) -> 'SyncIter[tuple[T, T]]':
+    def pairwise(self) -> 'SyncIter[tuple[_T, _T]]':
         """Return an iterable of overlapping pairs
 
         :return: tuple[item_0, item_1], tuple[item_1, item_2], ...
@@ -478,7 +478,7 @@ class SyncIter(Generic[T]):
             batch = it.take(batch_size).to_tuple()
             yield batch
 
-    def flatten(self: 'SyncIter[Iterator[T]]') -> 'SyncIter[T]':
+    def flatten(self: 'SyncIter[Iterator[_T]]') -> 'SyncIter[_T]':
         """Return an iterator that flattens one level of nesting
 
         :return: iterable of flattened items
@@ -490,7 +490,7 @@ class SyncIter(Generic[T]):
     def __len__(self) -> int:
         return self.count()
 
-    def __getitem__(self, index: int | slice) -> T | 'SyncIter[T]':
+    def __getitem__(self, index: int | slice) -> T | 'SyncIter[_T]':
         if isinstance(index, slice):
             return self.islice(
                 start=index.start or 0,

@@ -1,7 +1,7 @@
 from typing import Awaitable, Callable, ParamSpec, TypeVar
 
-T = TypeVar('T')
-R = TypeVar('R')
-P = ParamSpec('P')
+_T = TypeVar('_T')
+_R = TypeVar('_R')
+_P = ParamSpec('_P')
 
-def asyncify(func: Callable[P, R | Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
+def asyncify(func: Callable[_P, _R | Awaitable[_R]]) -> Callable[_P, Awaitable[_R]]: ...
