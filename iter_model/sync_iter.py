@@ -246,13 +246,6 @@ class SyncIter(Generic[T]):
         """
         return any(self)
 
-    def first(self) -> T:
-        """Return first item. The same as next()
-
-        :return: first item
-        """
-        return self.next()
-
     @sync_iter
     def mark_first(self) -> Iterator[tuple[T, bool]]:
         """Mark first item.
@@ -428,7 +421,7 @@ class SyncIter(Generic[T]):
         """
         return SyncIter(itertools.zip_longest(self, *iterables, fillvalue=fillvalue))
 
-    def get_slice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
+    def islice(self, start: int = 0, stop: int | None = None, step: int = 1) -> 'SyncIter[T]':
         """Return slice from the iterable
 
         :return: iterable
@@ -463,29 +456,12 @@ class SyncIter(Generic[T]):
             return True
         return False
 
-    def is_not_empty(self) -> bool:
-        """Return True if iterable is not empty
-
-        :return: bool
-        """
-        return not self.is_empty()
-
     def pairwise(self) -> 'SyncIter[tuple[T, T]]':
         """Return an iterable of overlapping pairs
 
         :return: tuple[item_0, item_1], tuple[item_1, item_2], ...
         """
         return SyncIter(itertools.pairwise(self))
-
-    def get_len(self) -> int:
-        """Return len of iterable
-
-        :return: length
-        """
-        count = 0
-        for _ in self:
-            count += 1
-        return count
 
     @sync_iter
     def batches(self, batch_size: int) -> Iterator[tuple[T, ...]]:
@@ -512,11 +488,11 @@ class SyncIter(Generic[T]):
         return SyncIter(itertools.chain.from_iterable(self))
 
     def __len__(self) -> int:
-        return self.get_len()
+        return self.count()
 
     def __getitem__(self, index: int | slice) -> T | 'SyncIter[T]':
         if isinstance(index, slice):
-            return self.get_slice(
+            return self.islice(
                 start=index.start or 0,
                 stop=index.stop or None,
                 step=index.step or 1,
