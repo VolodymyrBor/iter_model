@@ -1,7 +1,7 @@
 # SyncIter
 
 ## class SyncIter
-:::iter_model.async_iter.AsyncIter
+:::iter_model.sync_iter.SyncIter
 
 ## Support Operators and Build-in func
 
