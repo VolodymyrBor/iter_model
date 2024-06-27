@@ -1,3 +1,16 @@
+### [3.0.0] (2024-06-27)
+
+⚠️ Breaking changes:
+
+- Removed methods
+  - `is_not_empty()` 
+  - `first()` (duplicate of `next()`)
+  - `get_len()` (duplicate of `count()`)
+- Renamed methods:
+  - `get_slice()` => `islice()` 
+
+---
+
 ### [2.3.2] (2024-04-12)
 
 Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
@@ -186,3 +199,6 @@ Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
 [2.1.0]: https://github.com/VolodymyrBor/iter_model/pull/24
 [2.2.0]: https://github.com/VolodymyrBor/iter_model/pull/26
 [2.3.0]: https://github.com/VolodymyrBor/iter_model/pull/29
+[2.3.1]: https://github.com/VolodymyrBor/iter_model/pull/29
+[2.3.2]: https://github.com/VolodymyrBor/iter_model/pull/29
+[3.0.0]: https://github.com/VolodymyrBor/iter_model/pull/29
