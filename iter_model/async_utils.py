@@ -2,18 +2,18 @@ import asyncio
 from functools import wraps
 from typing import TypeVar, ParamSpec, Callable, Awaitable, cast
 
-T = TypeVar('T')
-R = TypeVar('R')
-P = ParamSpec('P')
+_T = TypeVar('_T')
+_R = TypeVar('_R')
+_P = ParamSpec('_P')
 
 
-def asyncify(func: Callable[P, R | Awaitable[R]]) -> Callable[P, Awaitable[R]]:
+def asyncify(func: Callable[_P, _R | Awaitable[_R]]) -> Callable[_P, Awaitable[_R]]:
 
     if asyncio.iscoroutinefunction(func):
-        return cast(Callable[P, Awaitable[R]], func)
+        return cast(Callable[_P, Awaitable[_R]], func)
 
     @wraps(func)
-    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        return cast(R, func(*args, **kwargs))
+    async def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+        return cast(_R, func(*args, **kwargs))
 
-    return cast(Callable[P, Awaitable[R]], wrapper)
+    return cast(Callable[_P, Awaitable[_R]], wrapper)
