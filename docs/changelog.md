@@ -200,5 +200,5 @@ Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
 [2.2.0]: https://github.com/VolodymyrBor/iter_model/pull/26
 [2.3.0]: https://github.com/VolodymyrBor/iter_model/pull/29
 [2.3.1]: https://github.com/VolodymyrBor/iter_model/pull/29
-[2.3.2]: https://github.com/VolodymyrBor/iter_model/pull/29
-[3.0.0]: https://github.com/VolodymyrBor/iter_model/pull/29
+[2.3.2]: https://github.com/VolodymyrBor/iter_model/pull/31
+[3.0.0]: https://github.com/VolodymyrBor/iter_model/pull/33
