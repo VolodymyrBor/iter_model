@@ -1,6 +1,7 @@
 ### [4.0.0] (2026-04-12)
 
-- Imported typing
+- 🐍 Add support for Python 3.12, 3.13, and 3.14
+- ✨ Imported typing
 
 ⚠️ Breaking changes:
   - removed method `__getitem__`
