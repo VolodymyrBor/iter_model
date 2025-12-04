@@ -12,13 +12,5 @@
     AsyncIter.from_sync(range(5))[2:]
     ``` 
 
-### Get item by index
-
-!!! quote "Example"
-    ```python
-    await AsyncIter.from_sync(range(5))[2]
-    >>> 2
-    ``` 
-
 ## async_iter
 :::iter_model.async_iter.async_iter

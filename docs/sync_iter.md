@@ -21,20 +21,5 @@
     >>> True
     ``` 
 
-### Slice
-
-!!! quote "Example"
-    ```python
-    SyncIter(range(5))[2:]
-    ``` 
-
-### Get item by index
-
-!!! quote "Example"
-    ```python
-    SyncIter(range(5))[2]
-    >>> 2
-    ``` 
-
 ## async_iter
 :::iter_model.sync_iter.sync_iter
