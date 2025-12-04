@@ -1,6 +1,6 @@
 
 run_ruff:
-	poetry run ruff ./tests ./iter_model
+	poetry run ruff check ./tests ./iter_model
 
 
 run_mypy:

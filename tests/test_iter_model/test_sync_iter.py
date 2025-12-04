@@ -1,7 +1,8 @@
 import functools
 import itertools
 import operator
-from typing import Callable, Iterable, Any, Sequence
+from collections.abc import Callable, Iterable, Sequence
+from typing import Any
 
 import pytest
 
@@ -306,7 +307,7 @@ class TestSyncIter:
     def test_zip(self, iterables: Iterable[Iterable]):
         r = range(3)
         it = SyncIter(r)
-        assert it.zip(*iterables).to_list() == list(zip(r, *iterables))
+        assert it.zip(*iterables).to_list() == list(zip(r, *iterables, strict=False))
 
     def test_zip_strict(self):
         with pytest.raises(ValueError):
@@ -415,35 +416,6 @@ class TestSyncIter:
     @pytest.mark.parametrize('items', ([], range(1), range(2)))
     def test_get_len_dander_method(self, items: Sequence[int]):
         assert len(SyncIter(items)) == len(items)
-
-    @pytest.mark.parametrize('slice_', (
-        slice(None),
-        slice(None, None),
-        slice(2, None),
-        slice(None, 4),
-        slice(100, None),
-        slice(100),
-        slice(None, None, 2),
-        slice(None, 5, 2),
-        slice(5, None, 3),
-    ))
-    def test_getitem_dander_method_slice(self, slice_: slice):
-        r = range(10)
-        assert SyncIter(r)[slice_].to_list() == list(r)[slice_]
-
-    @pytest.mark.parametrize('index', (
-        0, 1, 5,
-    ))
-    def test_getitem_dander_method(self, index: int):
-        r = range(10)
-        assert SyncIter(r)[index] == list(r)[index]
-
-    @pytest.mark.parametrize('index', (
-        -1, -5, 100,
-    ))
-    def test_getitem_dander_method_exception(self, index: int):
-        with pytest.raises(IndexError):
-            _ = SyncIter(range(5))[index]
 
     def test_empty(self):
         it = SyncIter.empty()

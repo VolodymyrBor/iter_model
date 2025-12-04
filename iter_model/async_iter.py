@@ -1,14 +1,10 @@
 import operator
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
 from functools import wraps
 from typing import (
-    TypeVar,
     Generic,
-    Callable,
-    Iterable,
     ParamSpec,
-    Awaitable,
-    AsyncIterable,
-    AsyncIterator,
+    TypeVar,
     cast,
 )
 
@@ -43,7 +39,7 @@ def async_iter(func: Callable[_P, AsyncIterator[_T]]) -> Callable[_P, 'AsyncIter
 
     @wraps(func)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> 'AsyncIter[_T]':
-        return AsyncIter(func(*args, **kwargs))
+        return AsyncIter[_T](func(*args, **kwargs))
 
     return wrapper
 
@@ -54,11 +50,11 @@ class AsyncIter(Generic[_T]):
     def __init__(self, it: AsyncIterator[_T] | AsyncIterable[_T]):
         self._it = aiter(it)
 
-    def __aiter__(self) -> AsyncIterator[_T]:
+    def __aiter__(self):
         return self._it
 
-    def __anext__(self) -> Awaitable[_T]:
-        return anext(self._it)
+    async def __anext__(self) -> _T:
+        return await anext(self._it)
 
     @classmethod
     @async_iter
@@ -656,12 +652,3 @@ class AsyncIter(Generic[_T]):
                 raise TypeError(
                     f"Item of type {type(iterable)} is not iterable"
                 )
-
-    def __getitem__(self, index: int | slice) -> Awaitable[_T] | 'AsyncIter[_T]':
-        if isinstance(index, slice):
-            return self.islice(
-                start=index.start or 0,
-                stop=index.stop or None,
-                step=index.step or 1,
-            )
-        return self.item_at(index)

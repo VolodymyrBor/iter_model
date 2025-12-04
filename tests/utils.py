@@ -1,4 +1,5 @@
-from typing import Iterable, AsyncIterable, TypeVar, ParamSpec
+from collections.abc import AsyncIterable, Iterable
+from typing import ParamSpec, TypeVar
 
 _T = TypeVar('_T')
 _R = TypeVar('_R')
