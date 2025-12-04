@@ -1,8 +1,8 @@
 import functools
 import itertools
 import operator
-from typing import Any
 from collections.abc import Callable, Iterable, Sequence
+from typing import Any
 
 import pytest
 

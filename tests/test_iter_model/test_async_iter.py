@@ -1,14 +1,14 @@
 import functools
 import itertools
 import operator
-from typing import Any
 from collections.abc import AsyncIterable, Callable, Iterable, Sequence
+from typing import Any
 
 import pytest
 
-from tests.utils import to_async_iter
 from iter_model import AsyncIter, async_iter
 from iter_model.async_utils import asyncify
+from tests.utils import to_async_iter
 
 
 async def asyncify_iterable(iterable: Iterable) -> AsyncIterable:
