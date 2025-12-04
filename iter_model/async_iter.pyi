@@ -1,7 +1,8 @@
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
+from typing import Generic, ParamSpec, TypeVar
+
 from .async_utils import asyncify as asyncify
 from .empty_iterator import EmptyAsyncIterator as EmptyAsyncIterator
-from typing import Generic, ParamSpec, TypeVar
-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
 
 _T = TypeVar('_T')
 _R = TypeVar('_R')

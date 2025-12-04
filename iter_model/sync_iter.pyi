@@ -1,5 +1,5 @@
-from typing import Generic, ParamSpec, TypeVar
 from collections.abc import Callable, Iterable, Iterator
+from typing import Generic, ParamSpec, TypeVar
 
 _T = TypeVar('_T')
 _R = TypeVar('_R')

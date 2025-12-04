@@ -1,12 +1,12 @@
 import operator
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
 from functools import wraps
 from typing import (
-    TypeVar,
     Generic,
     ParamSpec,
-    cast, Union,
+    TypeVar,
+    cast,
 )
-from collections.abc import Callable, Iterable, Awaitable, AsyncIterable, AsyncIterator
 
 from .async_utils import asyncify
 from .empty_iterator import EmptyAsyncIterator

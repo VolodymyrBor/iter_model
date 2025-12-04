@@ -1,5 +1,5 @@
+from collections.abc import AsyncIterator, Iterator
 from typing import Any
-from collections.abc import Iterator, AsyncIterator
 
 
 class EmptyIterator(Iterator):

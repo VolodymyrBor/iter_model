@@ -1,7 +1,7 @@
 import asyncio
+from collections.abc import Awaitable, Callable
 from functools import wraps
-from typing import TypeVar, ParamSpec, cast
-from collections.abc import Callable, Awaitable
+from typing import ParamSpec, TypeVar, cast
 
 _T = TypeVar('_T')
 _R = TypeVar('_R')

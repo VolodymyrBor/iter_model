@@ -1,9 +1,9 @@
-import operator
 import functools
 import itertools
+import operator
+from collections.abc import Callable, Iterable, Iterator
 from functools import wraps
-from typing import TypeVar, Generic, ParamSpec
-from collections.abc import Iterable, Callable, Iterator
+from typing import Generic, ParamSpec, TypeVar
 
 from .empty_iterator import EmptyIterator
 
