@@ -1,3 +1,13 @@
+### [4.0.0] (2026-04-12)
+
+- 🐍 Add support for Python 3.12, 3.13, and 3.14
+- ✨ Imported typing
+
+⚠️ Breaking changes:
+  - removed method `__getitem__`
+
+---
+
 ### [3.0.0] (2024-06-27)
 
 ⚠️ Breaking changes:
@@ -202,3 +212,4 @@ Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
 [2.3.1]: https://github.com/VolodymyrBor/iter_model/pull/29
 [2.3.2]: https://github.com/VolodymyrBor/iter_model/pull/31
 [3.0.0]: https://github.com/VolodymyrBor/iter_model/pull/33
+[4.0.0]: https://github.com/VolodymyrBor/iter_model/pull/35
