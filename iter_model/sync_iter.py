@@ -2,7 +2,8 @@ import operator
 import functools
 import itertools
 from functools import wraps
-from typing import Iterable, TypeVar, Callable, Generic, ParamSpec, Iterator
+from typing import TypeVar, Generic, ParamSpec
+from collections.abc import Iterable, Callable, Iterator
 
 from .empty_iterator import EmptyIterator
 
@@ -489,15 +490,6 @@ class SyncIter(Generic[_T]):
 
     def __len__(self) -> int:
         return self.count()
-
-    def __getitem__(self, index: int | slice) -> _T | 'SyncIter[_T]':
-        if isinstance(index, slice):
-            return self.islice(
-                start=index.start or 0,
-                stop=index.stop or None,
-                step=index.step or 1,
-            )
-        return self.item_at(index)
 
     def __contains__(self, item: _T) -> bool:
         return self.contains(item)

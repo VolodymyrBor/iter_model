@@ -1,2 +1,2 @@
-from .sync_iter import sync_iter, SyncIter
-from .async_iter import async_iter, AsyncIter
+from .async_iter import AsyncIter, async_iter
+from .sync_iter import SyncIter, sync_iter

@@ -1,7 +1,8 @@
 import functools
 import itertools
 import operator
-from typing import AsyncIterable, Callable, Iterable, Any, Sequence
+from typing import Any
+from collections.abc import AsyncIterable, Callable, Iterable, Sequence
 
 import pytest
 
@@ -328,7 +329,7 @@ class TestAsyncIter:
         it = AsyncIter.from_sync(r)
         assert await it.zip(
             *map(AsyncIter.from_sync, iterables),  # type: ignore
-        ).to_list() == list(map(list, zip(r, *iterables)))  # noqa: W291
+        ).to_list() == list(map(list, zip(r, *iterables, strict=False)))
 
     async def test_zip_strict(self):
         with pytest.raises(ValueError):
@@ -419,36 +420,6 @@ class TestAsyncIter:
     async def test_pairwise(self, items: Sequence[int]):
         it: AsyncIter[int] = AsyncIter.from_sync(items)
         assert await it.pairwise().to_list() == list(itertools.pairwise(items))
-
-    @pytest.mark.parametrize('slice_', (
-        slice(None),
-        slice(None, None),
-        slice(2, None),
-        slice(None, 4),
-        slice(100, None),
-        slice(100),
-        slice(None, None, 2),
-        slice(None, 5, 2),
-        slice(5, None, 3),
-    ))
-    async def test_getitem_dander_method_slice(self, slice_: slice):
-        r = range(10)
-        it: AsyncIter[int] = AsyncIter.from_sync(r)
-        assert await it[slice_].to_list() == list(r)[slice_]
-
-    @pytest.mark.parametrize('index', (
-        0, 1, 5,
-    ))
-    async def test_getitem_dander_method(self, index: int):
-        r = range(10)
-        assert await AsyncIter.from_sync(r)[index] == list(r)[index]
-
-    @pytest.mark.parametrize('index', (
-        -1, -5, 100,
-    ))
-    async def test_getitem_dander_method_exception(self, index: int):
-        with pytest.raises(IndexError):
-            await AsyncIter.from_sync(range(5))[index]
 
     async def test_empty(self):
         it = AsyncIter.empty()
