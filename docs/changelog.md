@@ -1,3 +1,9 @@
+### [4.0.2] (2026-12-07)
+
+- 🐛 Fix package metadata to support Python 3.14
+
+---
+
 ### [4.0.1] (2026-12-07)
 
 - 🐍 Add support for Python 3.12, 3.13, and 3.14 in package metadata
@@ -220,3 +226,4 @@ Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
 [3.0.0]: https://github.com/VolodymyrBor/iter_model/pull/33
 [4.0.0]: https://github.com/VolodymyrBor/iter_model/pull/35
 [4.0.1]: https://github.com/VolodymyrBor/iter_model/pull/36
+[4.0.2]: https://github.com/VolodymyrBor/iter_model/pull/37
