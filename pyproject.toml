@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iter_model"
-version = "4.0.0"
+version = "4.0.1"
 description = "iter-model uses a method approach instead of individual functions to work with iterable objects."
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 license = "MIT"
@@ -12,7 +12,7 @@ keywords = ["iterator", "iterable", 'async']
 include = ["iter_model/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<=3.14"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
