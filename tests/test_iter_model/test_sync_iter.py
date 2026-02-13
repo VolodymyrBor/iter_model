@@ -387,6 +387,8 @@ class TestSyncIter:
             ((1, 2, 3), 1, True),
             ((1, 2, 3), 3, True),
             ((1, 2, 3), -1, False),
+            ((1, None, 3), None, True),
+            ((1, 'a', 3), None, False),
         ),
     )
     def test_contains(self, items: Sequence[int], item: int, result: bool):
