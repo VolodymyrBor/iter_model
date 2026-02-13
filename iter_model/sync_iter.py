@@ -444,7 +444,8 @@ class SyncIter(Generic[_T]):
 
         :return: bool
         """
-        return self.first_where(lambda x: x == item, default=None) is not None
+        default = object()
+        return self.first_where(lambda x: x == item, default=default) is not default
 
     def is_empty(self) -> bool:
         """Return True if the iterable is empty

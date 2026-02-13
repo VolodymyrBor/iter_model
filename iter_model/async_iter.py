@@ -591,7 +591,8 @@ class AsyncIter(Generic[_T]):
 
         :return: True if the iterable contains item
         """
-        return await self.first_where(lambda x: x == item, default=None) is not None
+        default = object()
+        return await self.first_where(lambda x: x == item, default=default) is not default
 
     async def is_empty(self) -> bool:
         """Return True if iterable is empty
