@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iter_model"
-version = "4.0.4"
+version = "4.0.5"
 description = "iter-model uses a method approach instead of individual functions to work with iterable objects."
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 license = "MIT"

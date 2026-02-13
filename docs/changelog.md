@@ -1,4 +1,10 @@
-### [4.0.4] (2026-12-07)
+### [4.0.5] (2026-02-13)
+
+- 🐛 Fix `contains()`  logic to handle `None` values correctly in both sync and async
+
+---
+
+### [4.0.4] (2025-12-07)
 
 - 🐛 Fix package metadata to support Python 3.14
 
@@ -241,3 +247,4 @@ Add [py.typed](..%2Fiter_model%2Fpy.typed) file to package
 [4.0.2]: https://github.com/VolodymyrBor/iter_model/pull/37
 [4.0.3]: https://github.com/VolodymyrBor/iter_model/pull/38
 [4.0.4]: https://github.com/VolodymyrBor/iter_model/pull/39
+[4.0.5]: https://github.com/VolodymyrBor/iter_model/pull/41
